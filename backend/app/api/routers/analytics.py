@@ -257,8 +257,12 @@ def monthly_records(
     page_size: Annotated[int, Query(ge=1, le=200)] = 12,
     sort_by: Annotated[RecordSortColumn, Query()] = "month",
     sort_dir: Annotated[Literal["asc", "desc"], Query()] = "desc",
+    revenue_vs_budget: Annotated[
+        Literal["all", "above", "below"],
+        Query(description="Keep only rows whose net revenue is above or below its budget"),
+    ] = "all",
 ) -> MonthlyRecordsResponse:
-    return performance.monthly_records(ctx, page, page_size, sort_by, sort_dir)
+    return performance.monthly_records(ctx, page, page_size, sort_by, sort_dir, revenue_vs_budget)
 
 
 @router.get(

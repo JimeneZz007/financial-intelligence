@@ -484,6 +484,7 @@ class MonthlyRecordsResponse(BaseModel):
     pagination: Pagination
     sort_by: str
     sort_dir: Literal["asc", "desc"]
+    revenue_vs_budget: Literal["all", "above", "below"]
     rows: list[MonthlyRecord]
 
 

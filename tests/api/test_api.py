@@ -691,6 +691,24 @@ def test_monthly_records_pagination(client: TestClient) -> None:
     )
 
 
+def test_monthly_records_filter_by_budget_attainment(client: TestClient) -> None:
+    everything = get(client, "/records/monthly", **FY2025, page_size=200)
+    above = get(client, "/records/monthly", **FY2025, page_size=200, revenue_vs_budget="above")
+    below = get(client, "/records/monthly", **FY2025, page_size=200, revenue_vs_budget="below")
+    assert above["revenue_vs_budget"] == "above"
+    assert all(row["revenue_variance_pct"] > 0 for row in above["rows"])
+    assert all(row["revenue_variance_pct"] < 0 for row in below["rows"])
+    assert (
+        above["pagination"]["total_items"] + below["pagination"]["total_items"]
+        == (everything["pagination"]["total_items"])
+    )
+    assert above["rows"]
+    assert below["rows"]
+    assert (
+        client.get(f"{API}/records/monthly", params={"revenue_vs_budget": "x"}).status_code == 422
+    )
+
+
 @pytest.mark.parametrize(
     ("sort_by", "sort_dir"),
     [("net_revenue", "desc"), ("operating_margin", "asc"), ("month", "asc")],

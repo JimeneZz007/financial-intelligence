@@ -221,9 +221,19 @@ def monthly_records_frame(ctx: AnalysisContext) -> pd.DataFrame:
 
 
 def monthly_records(
-    ctx: AnalysisContext, page: int, page_size: int, sort_by: str, sort_dir: str
+    ctx: AnalysisContext,
+    page: int,
+    page_size: int,
+    sort_by: str,
+    sort_dir: str,
+    revenue_vs_budget: str = "all",
 ) -> MonthlyRecordsResponse:
-    frame = monthly_records_frame(ctx).sort_values(
+    frame = monthly_records_frame(ctx)
+    if revenue_vs_budget == "above":
+        frame = frame[frame["net_revenue"] > frame["budget_net_revenue"]]
+    elif revenue_vs_budget == "below":
+        frame = frame[frame["net_revenue"] < frame["budget_net_revenue"]]
+    frame = frame.sort_values(
         [sort_by, "month", "business_unit_code"],
         ascending=[sort_dir == "asc", True, True],
         kind="stable",
@@ -258,5 +268,6 @@ def monthly_records(
         ),
         sort_by=sort_by,
         sort_dir=sort_dir,
+        revenue_vs_budget=revenue_vs_budget,
         rows=rows,
     )
