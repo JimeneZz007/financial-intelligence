@@ -1,0 +1,77 @@
+{
+  "generator_version": "1.0.0",
+  "seed": 20230101,
+  "company": "Grupo Comercial Altamira",
+  "synthetic": true,
+  "currency": "USD",
+  "period": {
+    "start": "2023-01-01",
+    "end": "2025-12-31"
+  },
+  "files": {
+    "business_units.csv": {
+      "rows": 4,
+      "sha256": "c1c0fa94c706fb781ee649340c21241d7bdbc0aabb68cac2cdc8c56f8d4f4581"
+    },
+    "products.csv": {
+      "rows": 30,
+      "sha256": "878be5a79118d0c346216ca281170df01752fbc30d92d04bd024a92fdb9b4ac4"
+    },
+    "cost_centers.csv": {
+      "rows": 6,
+      "sha256": "ea27605f0bc0a6ec1e58ee756a3c96b47b724d096052fe2545de1deb7ff4b462"
+    },
+    "chart_of_accounts.csv": {
+      "rows": 13,
+      "sha256": "e6942d4b52b5412c726ec3cf7320fbd5a8ac30704aff818b10d79b3dc067208c"
+    },
+    "sales_transactions.csv": {
+      "rows": 109825,
+      "sha256": "f0748073bc8773a7e8ea07ffd2135f4e7f546af78b9f145b7e3fd2363728f309"
+    },
+    "expense_ledger.csv": {
+      "rows": 11189,
+      "sha256": "6a84415a890e4c7edb17e78e822d6fcd681f41d0b911651b116b18cdc4d341cd"
+    },
+    "budget_plan.csv": {
+      "rows": 1875,
+      "sha256": "c3139c668cde0d7e571e73d1a02c94ea9899b9a760042135ee456ecad02a5dda"
+    }
+  },
+  "control_totals": {
+    "sales_transactions": {
+      "rows": 109759,
+      "units_sold": 1978350,
+      "gross_sales_amount": 167714939.74,
+      "discount_amount": 7226747.25,
+      "net_sales_amount": 160488192.49,
+      "cogs_amount": 109554073.94
+    },
+    "expense_ledger": {
+      "rows": 11159,
+      "amount": 39951849.84
+    },
+    "budget_plan": {
+      "rows": 1872,
+      "budget_amount": 312748700.0
+    }
+  },
+  "injected_defects": {
+    "sales_transactions": {
+      "DUPLICATE_ROW": 40,
+      "CODE_FORMAT": 25,
+      "UNKNOWN_PRODUCT": 12,
+      "MISSING_UNITS": 8,
+      "AMOUNT_MISMATCH": 6
+    },
+    "expense_ledger": {
+      "DUPLICATE_ROW": 15,
+      "DATE_FORMAT": 9,
+      "NON_POSITIVE_AMOUNT": 10,
+      "UNKNOWN_COST_CENTER": 5
+    },
+    "budget_plan": {
+      "DUPLICATE_ROW": 3
+    }
+  }
+}

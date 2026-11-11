@@ -1,0 +1,654 @@
+[
+  {
+    "id": "S1",
+    "name": "Wholesale key-account loss",
+    "description": "A major distributor stops ordering from Wholesale Distribution in April 2024. Demand falls 26% for three months and recovers gradually by September.",
+    "effects": [
+      {
+        "lever": "DEMAND",
+        "business_units": [
+          "WHS"
+        ],
+        "months": {
+          "2024-04": 0.74,
+          "2024-05": 0.74,
+          "2024-06": 0.74,
+          "2024-07": 0.92,
+          "2024-08": 0.92
+        },
+        "account_code": null,
+        "category_code": null,
+        "budgeted_from_year": null
+      }
+    ],
+    "signatures": [
+      {
+        "account_code": "4000",
+        "business_units": [
+          "WHS"
+        ],
+        "months": [
+          "2024-04",
+          "2024-05",
+          "2024-06"
+        ],
+        "direction": "UNFAVORABLE",
+        "role": "PRIMARY"
+      },
+      {
+        "account_code": "5000",
+        "business_units": [
+          "WHS"
+        ],
+        "months": [
+          "2024-04",
+          "2024-05",
+          "2024-06"
+        ],
+        "direction": "FAVORABLE",
+        "role": "DERIVED"
+      },
+      {
+        "account_code": "6400",
+        "business_units": [
+          "WHS"
+        ],
+        "months": [
+          "2024-04",
+          "2024-05",
+          "2024-06"
+        ],
+        "direction": "FAVORABLE",
+        "role": "DERIVED"
+      },
+      {
+        "account_code": "6800",
+        "business_units": [
+          "WHS"
+        ],
+        "months": [
+          "2024-04",
+          "2024-05",
+          "2024-06"
+        ],
+        "direction": "FAVORABLE",
+        "role": "DERIVED"
+      },
+      {
+        "account_code": "4000",
+        "business_units": [
+          "WHS"
+        ],
+        "months": [
+          "2024-07",
+          "2024-08"
+        ],
+        "direction": "UNFAVORABLE",
+        "role": "DERIVED"
+      }
+    ]
+  },
+  {
+    "id": "S2",
+    "name": "E-commerce acquisition campaign",
+    "description": "E-commerce runs an unbudgeted acquisition campaign in March-April 2025. Advertising spend rises 85% and 35% over its baseline while demand rises 14% and 10%.",
+    "effects": [
+      {
+        "lever": "OPEX_MULTIPLIER",
+        "business_units": [
+          "ECM"
+        ],
+        "months": {
+          "2025-03": 1.85,
+          "2025-04": 1.35
+        },
+        "account_code": "6200",
+        "category_code": null,
+        "budgeted_from_year": null
+      },
+      {
+        "lever": "DEMAND",
+        "business_units": [
+          "ECM"
+        ],
+        "months": {
+          "2025-03": 1.14,
+          "2025-04": 1.1
+        },
+        "account_code": null,
+        "category_code": null,
+        "budgeted_from_year": null
+      }
+    ],
+    "signatures": [
+      {
+        "account_code": "6200",
+        "business_units": [
+          "ECM"
+        ],
+        "months": [
+          "2025-03",
+          "2025-04"
+        ],
+        "direction": "UNFAVORABLE",
+        "role": "PRIMARY"
+      },
+      {
+        "account_code": "4000",
+        "business_units": [
+          "ECM"
+        ],
+        "months": [
+          "2025-03",
+          "2025-04"
+        ],
+        "direction": "FAVORABLE",
+        "role": "PRIMARY"
+      },
+      {
+        "account_code": "5000",
+        "business_units": [
+          "ECM"
+        ],
+        "months": [
+          "2025-03",
+          "2025-04"
+        ],
+        "direction": "UNFAVORABLE",
+        "role": "DERIVED"
+      },
+      {
+        "account_code": "6400",
+        "business_units": [
+          "ECM"
+        ],
+        "months": [
+          "2025-03",
+          "2025-04"
+        ],
+        "direction": "UNFAVORABLE",
+        "role": "DERIVED"
+      },
+      {
+        "account_code": "6800",
+        "business_units": [
+          "ECM"
+        ],
+        "months": [
+          "2025-03",
+          "2025-04"
+        ],
+        "direction": "UNFAVORABLE",
+        "role": "DERIVED"
+      }
+    ]
+  },
+  {
+    "id": "S3",
+    "name": "Retail flagship store renovation",
+    "description": "The flagship store closes partially for renovation in February 2025; Retail Stores demand drops 20% that month.",
+    "effects": [
+      {
+        "lever": "DEMAND",
+        "business_units": [
+          "RET"
+        ],
+        "months": {
+          "2025-02": 0.8
+        },
+        "account_code": null,
+        "category_code": null,
+        "budgeted_from_year": null
+      }
+    ],
+    "signatures": [
+      {
+        "account_code": "4000",
+        "business_units": [
+          "RET"
+        ],
+        "months": [
+          "2025-02"
+        ],
+        "direction": "UNFAVORABLE",
+        "role": "PRIMARY"
+      },
+      {
+        "account_code": "5000",
+        "business_units": [
+          "RET"
+        ],
+        "months": [
+          "2025-02"
+        ],
+        "direction": "FAVORABLE",
+        "role": "DERIVED"
+      },
+      {
+        "account_code": "6400",
+        "business_units": [
+          "RET"
+        ],
+        "months": [
+          "2025-02"
+        ],
+        "direction": "FAVORABLE",
+        "role": "DERIVED"
+      },
+      {
+        "account_code": "6800",
+        "business_units": [
+          "RET"
+        ],
+        "months": [
+          "2025-02"
+        ],
+        "direction": "FAVORABLE",
+        "role": "DERIVED"
+      }
+    ]
+  },
+  {
+    "id": "S4",
+    "name": "Corporate supply contract win",
+    "description": "Corporate Solutions signs a new supply contract effective July 2025, lifting demand 28% for the rest of the year. Not in the 2025 budget.",
+    "effects": [
+      {
+        "lever": "DEMAND",
+        "business_units": [
+          "COR"
+        ],
+        "months": {
+          "2025-07": 1.28,
+          "2025-08": 1.28,
+          "2025-09": 1.28,
+          "2025-10": 1.28,
+          "2025-11": 1.28,
+          "2025-12": 1.28
+        },
+        "account_code": null,
+        "category_code": null,
+        "budgeted_from_year": null
+      }
+    ],
+    "signatures": [
+      {
+        "account_code": "4000",
+        "business_units": [
+          "COR"
+        ],
+        "months": [
+          "2025-07",
+          "2025-08",
+          "2025-09",
+          "2025-10",
+          "2025-11",
+          "2025-12"
+        ],
+        "direction": "FAVORABLE",
+        "role": "PRIMARY"
+      },
+      {
+        "account_code": "5000",
+        "business_units": [
+          "COR"
+        ],
+        "months": [
+          "2025-07",
+          "2025-08",
+          "2025-09",
+          "2025-10",
+          "2025-11",
+          "2025-12"
+        ],
+        "direction": "UNFAVORABLE",
+        "role": "DERIVED"
+      },
+      {
+        "account_code": "6400",
+        "business_units": [
+          "COR"
+        ],
+        "months": [
+          "2025-07",
+          "2025-08",
+          "2025-09",
+          "2025-10",
+          "2025-11",
+          "2025-12"
+        ],
+        "direction": "UNFAVORABLE",
+        "role": "DERIVED"
+      },
+      {
+        "account_code": "6800",
+        "business_units": [
+          "COR"
+        ],
+        "months": [
+          "2025-07",
+          "2025-08",
+          "2025-09",
+          "2025-10",
+          "2025-11",
+          "2025-12"
+        ],
+        "direction": "UNFAVORABLE",
+        "role": "DERIVED"
+      }
+    ]
+  },
+  {
+    "id": "S5",
+    "name": "Electronics supplier cost increase",
+    "description": "Electronics suppliers raise unit costs 7% from January 2025 on top of normal inflation. The company answers with a 4% list-price increase in July 2025. Neither was in the 2025 budget.",
+    "effects": [
+      {
+        "lever": "UNIT_COST",
+        "business_units": [
+          "RET",
+          "ECM",
+          "WHS",
+          "COR"
+        ],
+        "months": {
+          "2025-01": 1.07,
+          "2025-02": 1.07,
+          "2025-03": 1.07,
+          "2025-04": 1.07,
+          "2025-05": 1.07,
+          "2025-06": 1.07,
+          "2025-07": 1.07,
+          "2025-08": 1.07,
+          "2025-09": 1.07,
+          "2025-10": 1.07,
+          "2025-11": 1.07,
+          "2025-12": 1.07
+        },
+        "account_code": null,
+        "category_code": "ELE",
+        "budgeted_from_year": null
+      },
+      {
+        "lever": "LIST_PRICE",
+        "business_units": [
+          "RET",
+          "ECM",
+          "WHS",
+          "COR"
+        ],
+        "months": {
+          "2025-07": 1.04,
+          "2025-08": 1.04,
+          "2025-09": 1.04,
+          "2025-10": 1.04,
+          "2025-11": 1.04,
+          "2025-12": 1.04
+        },
+        "account_code": null,
+        "category_code": "ELE",
+        "budgeted_from_year": null
+      }
+    ],
+    "signatures": [
+      {
+        "account_code": "5000",
+        "business_units": [
+          "RET",
+          "ECM",
+          "WHS",
+          "COR"
+        ],
+        "months": [
+          "2025-01",
+          "2025-02",
+          "2025-03",
+          "2025-04",
+          "2025-05",
+          "2025-06",
+          "2025-07",
+          "2025-08",
+          "2025-09",
+          "2025-10",
+          "2025-11",
+          "2025-12"
+        ],
+        "direction": "UNFAVORABLE",
+        "role": "PRIMARY"
+      },
+      {
+        "account_code": "4000",
+        "business_units": [
+          "RET",
+          "ECM",
+          "WHS",
+          "COR"
+        ],
+        "months": [
+          "2025-07",
+          "2025-08",
+          "2025-09",
+          "2025-10",
+          "2025-11",
+          "2025-12"
+        ],
+        "direction": "FAVORABLE",
+        "role": "DERIVED"
+      },
+      {
+        "account_code": "6800",
+        "business_units": [
+          "RET",
+          "ECM",
+          "WHS",
+          "COR"
+        ],
+        "months": [
+          "2025-07",
+          "2025-08",
+          "2025-09",
+          "2025-10",
+          "2025-11",
+          "2025-12"
+        ],
+        "direction": "UNFAVORABLE",
+        "role": "DERIVED"
+      },
+      {
+        "account_code": "6400",
+        "business_units": [
+          "RET",
+          "ECM",
+          "WHS",
+          "COR"
+        ],
+        "months": [
+          "2025-07",
+          "2025-08",
+          "2025-09",
+          "2025-10",
+          "2025-11",
+          "2025-12"
+        ],
+        "direction": "UNFAVORABLE",
+        "role": "DERIVED"
+      }
+    ]
+  },
+  {
+    "id": "S6",
+    "name": "Freight rate spike",
+    "description": "Carrier rates rise 38% between August and November 2024 for every business unit.",
+    "effects": [
+      {
+        "lever": "OPEX_MULTIPLIER",
+        "business_units": [
+          "RET",
+          "ECM",
+          "WHS",
+          "COR"
+        ],
+        "months": {
+          "2024-08": 1.38,
+          "2024-09": 1.38,
+          "2024-10": 1.38,
+          "2024-11": 1.38
+        },
+        "account_code": "6400",
+        "category_code": null,
+        "budgeted_from_year": null
+      }
+    ],
+    "signatures": [
+      {
+        "account_code": "6400",
+        "business_units": [
+          "RET",
+          "ECM",
+          "WHS",
+          "COR"
+        ],
+        "months": [
+          "2024-08",
+          "2024-09",
+          "2024-10",
+          "2024-11"
+        ],
+        "direction": "UNFAVORABLE",
+        "role": "PRIMARY"
+      }
+    ]
+  },
+  {
+    "id": "S7",
+    "name": "Retail legal settlement",
+    "description": "Retail Stores books a one-off USD 185,000 legal settlement under Professional Services in September 2023.",
+    "effects": [
+      {
+        "lever": "OPEX_ADDITION",
+        "business_units": [
+          "RET"
+        ],
+        "months": {
+          "2023-09": 185000.0
+        },
+        "account_code": "6600",
+        "category_code": null,
+        "budgeted_from_year": null
+      }
+    ],
+    "signatures": [
+      {
+        "account_code": "6600",
+        "business_units": [
+          "RET"
+        ],
+        "months": [
+          "2023-09"
+        ],
+        "direction": "UNFAVORABLE",
+        "role": "PRIMARY"
+      }
+    ]
+  },
+  {
+    "id": "S8",
+    "name": "E-commerce platform migration",
+    "description": "E-commerce migrates to a new commerce platform in March 2024, adding USD 22,000 per month of software cost. Unbudgeted in 2024, included in the 2025 budget.",
+    "effects": [
+      {
+        "lever": "OPEX_ADDITION",
+        "business_units": [
+          "ECM"
+        ],
+        "months": {
+          "2024-03": 22000.0,
+          "2024-04": 22000.0,
+          "2024-05": 22000.0,
+          "2024-06": 22000.0,
+          "2024-07": 22000.0,
+          "2024-08": 22000.0,
+          "2024-09": 22000.0,
+          "2024-10": 22000.0,
+          "2024-11": 22000.0,
+          "2024-12": 22000.0,
+          "2025-01": 22000.0,
+          "2025-02": 22000.0,
+          "2025-03": 22000.0,
+          "2025-04": 22000.0,
+          "2025-05": 22000.0,
+          "2025-06": 22000.0,
+          "2025-07": 22000.0,
+          "2025-08": 22000.0,
+          "2025-09": 22000.0,
+          "2025-10": 22000.0,
+          "2025-11": 22000.0,
+          "2025-12": 22000.0
+        },
+        "account_code": "6500",
+        "category_code": null,
+        "budgeted_from_year": 2025
+      }
+    ],
+    "signatures": [
+      {
+        "account_code": "6500",
+        "business_units": [
+          "ECM"
+        ],
+        "months": [
+          "2024-03",
+          "2024-04",
+          "2024-05",
+          "2024-06",
+          "2024-07",
+          "2024-08",
+          "2024-09",
+          "2024-10",
+          "2024-11",
+          "2024-12"
+        ],
+        "direction": "UNFAVORABLE",
+        "role": "PRIMARY"
+      }
+    ]
+  },
+  {
+    "id": "S9",
+    "name": "Travel freeze",
+    "description": "Wholesale Distribution and Corporate Solutions freeze non-essential travel in the fourth quarter of 2024; travel spend falls 60%.",
+    "effects": [
+      {
+        "lever": "OPEX_MULTIPLIER",
+        "business_units": [
+          "WHS",
+          "COR"
+        ],
+        "months": {
+          "2024-10": 0.4,
+          "2024-11": 0.4,
+          "2024-12": 0.4
+        },
+        "account_code": "6700",
+        "category_code": null,
+        "budgeted_from_year": null
+      }
+    ],
+    "signatures": [
+      {
+        "account_code": "6700",
+        "business_units": [
+          "WHS",
+          "COR"
+        ],
+        "months": [
+          "2024-10",
+          "2024-11",
+          "2024-12"
+        ],
+        "direction": "FAVORABLE",
+        "role": "PRIMARY"
+      }
+    ]
+  }
+]
