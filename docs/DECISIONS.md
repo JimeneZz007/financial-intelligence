@@ -39,8 +39,8 @@ la sustituye.
 - **Motivo:** Kimball recomienda dimensiones planas: una tabla menos en cada consulta, sin
   pérdida de información, y la jerarquía categoría → producto queda en una sola dimensión.
 - **Consecuencia:** el catálogo de categorías se obtiene con `SELECT DISTINCT` sobre
-  `dim_product`; una restricción `UNIQUE` garantiza que cada código de categoría tenga un
-  único nombre.
+  `dim_product`. La dependencia código → nombre de categoría ya no la garantiza una clave,
+  así que la comprueba una regla de calidad del ETL.
 
 ## D-006 · Filtros globales limitados a dimensiones conformadas
 
