@@ -1,0 +1,209 @@
+{
+  "z_threshold": 3.5,
+  "series_evaluated": 52,
+  "cells_evaluated": 1872,
+  "primary_cells": 95,
+  "scenarios_total": 9,
+  "scenarios_detected": 9,
+  "scenarios_detected_material": 9,
+  "all_flags": {
+    "flagged_cells": 80,
+    "flagged_primary": 50,
+    "flagged_derived": 17,
+    "flagged_unexplained": 13,
+    "cell_recall": 0.5263,
+    "precision": 0.8375,
+    "unexplained_cells": [
+      {
+        "business_unit": "COR",
+        "account": "6300",
+        "month": "2025-01"
+      },
+      {
+        "business_unit": "COR",
+        "account": "6300",
+        "month": "2025-02"
+      },
+      {
+        "business_unit": "COR",
+        "account": "6300",
+        "month": "2025-03"
+      },
+      {
+        "business_unit": "COR",
+        "account": "6300",
+        "month": "2025-04"
+      },
+      {
+        "business_unit": "COR",
+        "account": "6300",
+        "month": "2025-05"
+      },
+      {
+        "business_unit": "COR",
+        "account": "6300",
+        "month": "2025-06"
+      },
+      {
+        "business_unit": "COR",
+        "account": "6300",
+        "month": "2025-07"
+      },
+      {
+        "business_unit": "COR",
+        "account": "6300",
+        "month": "2025-08"
+      },
+      {
+        "business_unit": "COR",
+        "account": "6300",
+        "month": "2025-09"
+      },
+      {
+        "business_unit": "COR",
+        "account": "6300",
+        "month": "2025-10"
+      },
+      {
+        "business_unit": "COR",
+        "account": "6300",
+        "month": "2025-11"
+      },
+      {
+        "business_unit": "COR",
+        "account": "6300",
+        "month": "2025-12"
+      },
+      {
+        "business_unit": "COR",
+        "account": "6600",
+        "month": "2025-10"
+      }
+    ]
+  },
+  "material_flags": {
+    "flagged_cells": 50,
+    "flagged_primary": 43,
+    "flagged_derived": 6,
+    "flagged_unexplained": 1,
+    "cell_recall": 0.4526,
+    "precision": 0.98,
+    "unexplained_cells": [
+      {
+        "business_unit": "COR",
+        "account": "6600",
+        "month": "2025-10"
+      }
+    ]
+  },
+  "scenarios": [
+    {
+      "id": "S1",
+      "name": "Wholesale key-account loss",
+      "primary_cells": 3,
+      "primary_flagged": 3,
+      "primary_flagged_material": 3,
+      "cell_recall": 1.0,
+      "detected": true,
+      "detected_material": true,
+      "derived_cells": 11,
+      "derived_flagged": 6
+    },
+    {
+      "id": "S2",
+      "name": "E-commerce acquisition campaign",
+      "primary_cells": 4,
+      "primary_flagged": 2,
+      "primary_flagged_material": 2,
+      "cell_recall": 0.5,
+      "detected": true,
+      "detected_material": true,
+      "derived_cells": 6,
+      "derived_flagged": 1
+    },
+    {
+      "id": "S3",
+      "name": "Retail flagship store renovation",
+      "primary_cells": 1,
+      "primary_flagged": 1,
+      "primary_flagged_material": 1,
+      "cell_recall": 1.0,
+      "detected": true,
+      "detected_material": true,
+      "derived_cells": 3,
+      "derived_flagged": 3
+    },
+    {
+      "id": "S4",
+      "name": "Corporate supply contract win",
+      "primary_cells": 6,
+      "primary_flagged": 6,
+      "primary_flagged_material": 6,
+      "cell_recall": 1.0,
+      "detected": true,
+      "detected_material": true,
+      "derived_cells": 18,
+      "derived_flagged": 15
+    },
+    {
+      "id": "S5",
+      "name": "Electronics supplier cost increase",
+      "primary_cells": 48,
+      "primary_flagged": 8,
+      "primary_flagged_material": 8,
+      "cell_recall": 0.1667,
+      "detected": true,
+      "detected_material": true,
+      "derived_cells": 72,
+      "derived_flagged": 15
+    },
+    {
+      "id": "S6",
+      "name": "Freight rate spike",
+      "primary_cells": 16,
+      "primary_flagged": 13,
+      "primary_flagged_material": 10,
+      "cell_recall": 0.8125,
+      "detected": true,
+      "detected_material": true,
+      "derived_cells": 0,
+      "derived_flagged": 0
+    },
+    {
+      "id": "S7",
+      "name": "Retail legal settlement",
+      "primary_cells": 1,
+      "primary_flagged": 1,
+      "primary_flagged_material": 1,
+      "cell_recall": 1.0,
+      "detected": true,
+      "detected_material": true,
+      "derived_cells": 0,
+      "derived_flagged": 0
+    },
+    {
+      "id": "S8",
+      "name": "E-commerce platform migration",
+      "primary_cells": 10,
+      "primary_flagged": 10,
+      "primary_flagged_material": 10,
+      "cell_recall": 1.0,
+      "detected": true,
+      "detected_material": true,
+      "derived_cells": 0,
+      "derived_flagged": 0
+    },
+    {
+      "id": "S9",
+      "name": "Travel freeze",
+      "primary_cells": 6,
+      "primary_flagged": 6,
+      "primary_flagged_material": 2,
+      "cell_recall": 1.0,
+      "detected": true,
+      "detected_material": true,
+      "derived_cells": 0,
+      "derived_flagged": 0
+    }
+  ]
+}
