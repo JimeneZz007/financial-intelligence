@@ -92,7 +92,7 @@ def _copy(connection: Connection, table: str, frame: pd.DataFrame, columns: list
 
 def _key_map(connection: Connection, table: str, key: str, natural_key: str) -> dict[str, int]:
     rows = connection.execute(text(f"SELECT {natural_key}, {key} FROM {table}"))
-    return {code: int(value) for code, value in rows}
+    return {str(row[0]): int(row[1]) for row in rows}
 
 
 def load_star_schema(

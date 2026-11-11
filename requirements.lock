@@ -21,7 +21,6 @@ numpy==2.5.4
 opentelemetry-api==1.45.2
 packaging==26.3
 pandas==2.3.3
-pandas-stubs==3.1.0.261029
 pathspec==1.1.1
 pluggy==1.7.0
 psycopg==3.3.8
