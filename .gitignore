@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Node
+node_modules/
+frontend/dist/
+frontend/coverage/
+frontend/test-results/
+frontend/playwright-report/
+*.tsbuildinfo
+
+# Environment and local infrastructure
+.env
+.env.*
+!.env.example
+.local/
+
+# Generated data (reproducible from the fixed seed, see docs/DATA_GENERATION.md)
+data/synthetic/*.csv
+data/processed/*.csv
+data/processed/rejected/
+
+# Power BI working files
+powerbi/data/*.csv
+*.pbix.tmp
+
+# OS / editors
+.DS_Store
+.idea/
+.vscode/
+*.log
