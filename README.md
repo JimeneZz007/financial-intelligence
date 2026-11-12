@@ -149,9 +149,22 @@ make evaluate    # evalúa el detector de atípicos contra los escenarios
 make powerbi-data
 ```
 
-**Docker Compose** (`docker compose up --build`, aplicación en `http://localhost:8080`)
-está incluido, pero **no se ha podido ejecutar** en el equipo de desarrollo. La ruta
-verificada es la nativa descrita arriba.
+### Con Docker Compose
+
+Alternativa que no requiere instalar Python, Node ni PostgreSQL: cuatro servicios
+(PostgreSQL, un pipeline que migra, genera y carga, la API y la web servida por nginx).
+
+```bash
+cp .env.example .env     # y cambia POSTGRES_PASSWORD
+docker compose up --build
+open http://localhost:8080
+```
+
+Verificado el 2026-11-12 con Docker Desktop 29 en macOS: las imágenes se construyen, el
+pipeline carga el almacén, la API queda sana y la aplicación responde en el puerto 8080
+con las mismas cifras que la instalación nativa. Las 43 pruebas de extremo a extremo
+también pasan contra esta pila (`make e2e-docker`). Al volver a arrancar sobre el mismo
+volumen, el pipeline recarga el almacén y conserva el historial de ejecuciones.
 
 ## Pruebas
 
@@ -168,6 +181,7 @@ make ci          # todas las verificaciones, igual que el flujo de CI
 | Ruff · mypy estricto | Sin incidencias |
 | Vitest y Testing Library | 73 de 73 |
 | Playwright contra la aplicación real | 43 de 43 |
+| Playwright contra la pila de Docker Compose (nginx en 8080) | 43 de 43 |
 | oxlint · TypeScript estricto · compilación | Sin incidencias |
 
 Cada indicador se triangula por tres caminos que no comparten código. Estrategia y
@@ -215,9 +229,10 @@ Más capturas, incluidas las de teléfono y la vista filtrada, en
 | Componente | Estado |
 |------------|--------|
 | Datos, modelo, pipeline, API, aplicación web, pruebas | Completado y verificado |
+| Docker Compose | Completado y verificado (macOS, Docker Desktop 29) |
 | Insumos de Power BI (consultas M, medidas DAX, tema, valores esperados) | Implementado, sin verificar en Power BI |
 | Informe Power BI (`.pbix`) | **Pendiente**: requiere Power BI Desktop, que no existe para macOS |
-| Docker Compose y GitHub Actions | Implementados, sin verificar |
+| GitHub Actions | Implementado, sin verificar (repositorio sin publicar) |
 
 Lo más importante que conviene saber:
 

@@ -30,9 +30,22 @@ centavo a los del entorno de desarrollo (59 053 741,75 USD), lo que confirma que
 se reproducen en una instalación nueva. Las pruebas de extremo a extremo no se repitieron
 en el clon.
 
+**Docker Compose.** El mismo día, con Docker Desktop 29 (Compose v5) en macOS,
+`docker compose up --build` construyó las tres imágenes (API y pipeline, 723 MB; web con
+nginx, 78 MB) y levantó los cuatro servicios a la primera, sin cambios en los archivos. Se
+comprobó:
+
+| Comprobación | Resultado |
+|--------------|-----------|
+| Pipeline en contenedor: generación, migración y carga | `ETL run 1: SUCCESS`, 109 759 / 11 159 / 1 872 filas, 44 PASS y 10 WARN, igual que en nativo |
+| 16 consultas de validación contra la base de datos del contenedor | 16 de 16 sin violaciones |
+| Seis endpoints comparados con la API nativa (KPI, estado de resultados, atípicos, rentabilidad, precio-volumen-mezcla, calidad) | Respuestas idénticas; en `data-quality` solo difiere el historial de ejecuciones, como corresponde |
+| Playwright contra `http://localhost:8080` (nginx sirve la web y reenvía `/api`) | **43 de 43** |
+| `docker compose down` y `up` sobre el mismo volumen | El pipeline recarga el almacén (`ETL run 2`) y conserva la auditoría; arranque en 22 s |
+
 **No verificado:** el flujo de GitHub Actions no se ha ejecutado (repositorio sin
-publicar) y Docker Compose tampoco (sin Docker en el equipo). Las pruebas de extremo a
-extremo solo se han ejecutado en Chromium.
+publicar). Las pruebas de extremo a extremo solo se han ejecutado en Chromium, y Docker
+Compose solo en macOS.
 
 ## 2. Cómo ejecutarlas
 
@@ -47,6 +60,10 @@ make validate                  # consultas SQL de validación
 make test-web                  # Vitest
 make e2e                       # Playwright; arranca la API y la web si no están en marcha
 make lint && make typecheck
+
+docker compose up --build -d   # la misma pila en contenedores, en http://localhost:8080
+make e2e-docker                # Playwright contra esa pila (E2E_WEB_URL y E2E_API_URL)
+docker compose down            # añade -v para borrar también el volumen de datos
 ```
 
 Requisitos: `make setup`, `make db-init` y, para las pruebas de extremo a extremo,

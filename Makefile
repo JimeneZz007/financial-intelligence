@@ -5,8 +5,8 @@ NPM := npm --prefix frontend
 
 .DEFAULT_GOAL := help
 .PHONY: help setup env db-init db-start db-stop migrate data etl pipeline api web \
-        lint typecheck test test-unit test-integration test-web e2e ci validate evaluate \
-        api-types screenshots powerbi-data
+        lint typecheck test test-unit test-integration test-web e2e e2e-docker ci validate \
+        evaluate api-types screenshots powerbi-data docker-up docker-down
 
 help: ## Show available targets
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-18s %s\n", $$1, $$2}'
@@ -69,6 +69,15 @@ test-web: ## Frontend unit and component tests
 
 e2e: ## Playwright end-to-end tests (starts API and web servers)
 	$(NPM) run e2e
+
+e2e-docker: ## Playwright end-to-end tests against the Docker Compose stack on :8080
+	E2E_WEB_URL=http://localhost:8080 E2E_API_URL=http://localhost:8080 $(NPM) run e2e
+
+docker-up: env ## Build and start the whole stack in containers (web on :8080)
+	docker compose up --build --detach
+
+docker-down: ## Stop the containers (keeps the data volume)
+	docker compose down
 
 validate: ## Run the independent SQL validation queries
 	scripts/run_validation_queries.sh

@@ -4,6 +4,20 @@ Todos los cambios relevantes del proyecto se registran en este archivo.
 El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y el
 proyecto usa [versionado semántico](https://semver.org/lang/es/).
 
+## [Sin publicar]
+
+### Verificado
+
+- Docker Compose, ejecutado por primera vez con Docker Desktop 29 en macOS: las imágenes se
+  construyen, el pipeline carga el almacén, las 16 consultas de validación y las 43 pruebas
+  de extremo a extremo pasan contra la pila en contenedores. Documentación actualizada en
+  consecuencia.
+
+### Añadido
+
+- La configuración de Playwright acepta `E2E_WEB_URL` y `E2E_API_URL` para ejecutar la
+  misma suite contra otro despliegue; `make e2e-docker` la lanza contra Docker Compose.
+
 ## [0.1.0] - 2026-11-12
 
 Primera versión funcional. Sin publicar.
@@ -52,4 +66,5 @@ Primera versión funcional. Sin publicar.
 
 - El informe Power BI (`.pbix`): requiere Power BI Desktop, no disponible en macOS. Las
   consultas M, las medidas DAX y el tema no se han ejecutado en Power BI.
-- Docker Compose y el flujo de GitHub Actions están escritos pero no se han ejecutado.
+- Docker Compose y el flujo de GitHub Actions están escritos pero no se han ejecutado
+  (Docker Compose quedó verificado después; ver «Sin publicar»).

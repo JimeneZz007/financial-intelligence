@@ -5,9 +5,13 @@ import { defineConfig, devices } from '@playwright/test'
  * by the pipeline, and the Vite dev server. Both are started here unless already running.
  *
  * Requires: `make db-init && make pipeline` (see docs/TESTING.md).
+ *
+ * To run the same suite against another deployment (for example the Docker Compose stack,
+ * where nginx serves the app and proxies /api on one origin), point both URLs at it:
+ *   E2E_WEB_URL=http://localhost:8080 E2E_API_URL=http://localhost:8080 npm run e2e
  */
-const WEB_URL = 'http://127.0.0.1:5173'
-const API_URL = 'http://127.0.0.1:8000'
+const WEB_URL = process.env.E2E_WEB_URL ?? 'http://127.0.0.1:5173'
+const API_URL = process.env.E2E_API_URL ?? 'http://127.0.0.1:8000'
 
 export default defineConfig({
   testDir: './e2e',

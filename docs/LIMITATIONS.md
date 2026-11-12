@@ -13,9 +13,9 @@ debe concluirse de él.
 | API y capa analítica | Completado y verificado |
 | Aplicación web | Completado y verificado (en Chromium) |
 | Pruebas y CI local | Completado y verificado |
+| Docker Compose | Completado y verificado (macOS, Docker Desktop 29) |
 | Insumos de Power BI (consultas M, medidas DAX, tema) | Implementado, **no verificado** en Power BI |
 | Informe Power BI (`.pbix`) | **Pendiente** |
-| Docker Compose | Implementado, **no verificado** |
 | Flujo de GitHub Actions | Implementado, **no verificado** |
 
 ## 2. Lo que no se ha verificado
@@ -24,12 +24,12 @@ debe concluirse de él.
   macOS. No hay archivo `.pbix` ni capturas. Las consultas M, las medidas DAX y el tema
   nunca se han ejecutado; pueden contener errores que solo aparecerán al construir el
   informe. Los valores esperados permiten comprobarlo ([POWER_BI.md](POWER_BI.md)).
-- **Docker Compose.** `docker-compose.yml` y los Dockerfiles se escribieron sin poder
-  ejecutarlos. Solo se ha comprobado que el YAML es sintácticamente válido.
 - **GitHub Actions.** El flujo no ha corrido nunca. Su equivalente local, `make ci`, sí.
 - **Otros navegadores y sistemas.** La interfaz se probó en Chromium sobre macOS. La
-  instalación se verificó en macOS con PostgreSQL de Homebrew; en Linux o Windows puede
-  requerir ajustes en `scripts/dev_db.sh`.
+  instalación nativa se verificó en macOS con PostgreSQL de Homebrew; en Linux o Windows
+  puede requerir ajustes en `scripts/dev_db.sh`. Docker Compose se verificó en macOS
+  (arm64) con Docker Desktop 29; las imágenes son estándar de Linux, pero no se han
+  construido en otro sistema anfitrión.
 - **Accesibilidad real.** La auditoría es automática (`axe-core`) y no sustituye a pruebas
   con lectores de pantalla y con usuarios.
 
@@ -106,6 +106,5 @@ debe concluirse de él.
 
 1. Construir el informe `.pbix` en un equipo con Power BI Desktop y comprobarlo con
    `powerbi/validation/expected_values.csv`.
-2. Ejecutar `docker compose up --build` y corregir lo que falle.
-3. Publicar el repositorio y comprobar el flujo de GitHub Actions.
-4. Evaluar el detector de atípicos con varias semillas.
+2. Publicar el repositorio y comprobar el flujo de GitHub Actions.
+3. Evaluar el detector de atípicos con varias semillas.

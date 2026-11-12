@@ -54,9 +54,14 @@ la sustituye.
 
 - **Decisión:** el entorno de desarrollo usa un clúster PostgreSQL local del proyecto
   (`scripts/dev_db.sh`). `docker-compose.yml` se entrega como alternativa.
-- **Motivo:** el equipo de desarrollo no tiene Docker instalado.
-- **Consecuencia:** la ruta nativa está verificada; la ruta con Docker Compose está
-  implementada pero **no verificada** (ver [LIMITATIONS.md](LIMITATIONS.md)).
+- **Motivo:** al iniciar el proyecto, el equipo de desarrollo no tenía Docker instalado,
+  y un clúster propio arranca en segundos sin depender de un daemon.
+- **Consecuencia:** la ruta nativa es la principal y la que ejecuta `make ci`.
+- **Actualización (2026-11-12):** con Docker instalado, `docker compose up --build` se
+  ejecutó sin cambios en los archivos: las imágenes se construyen, el pipeline carga el
+  almacén, las 16 consultas de validación y las 43 pruebas de extremo a extremo pasan
+  contra la pila en contenedores. Ambas rutas quedan verificadas; la nativa sigue siendo la
+  de desarrollo porque recarga el código al vuelo.
 
 ## D-008 · DuckDB no se utiliza
 

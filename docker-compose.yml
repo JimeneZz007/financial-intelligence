@@ -4,8 +4,11 @@
 #   docker compose up --build
 #   open http://localhost:8080
 #
-# STATUS: this file has not been executed. The development machine has no Docker, so the
-# verified way to run the project is the native one described in the README.
+# Verified on 2026-11-12 with Docker Desktop 29 / Compose v5 on macOS (arm64): the three
+# images build, the pipeline loads the warehouse, the API reports healthy and the web app
+# serves on :8080. The end-to-end suite passes against this stack (see docs/TESTING.md).
+# Re-running `docker compose up` on an existing volume reloads the warehouse (the ETL
+# truncates and reloads) and keeps the audit history.
 
 services:
   db:
