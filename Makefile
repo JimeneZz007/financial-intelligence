@@ -5,7 +5,8 @@ NPM := npm --prefix frontend
 
 .DEFAULT_GOAL := help
 .PHONY: help setup env db-init db-start db-stop migrate data etl pipeline api web \
-        lint typecheck test test-unit test-integration test-web e2e ci docs-kpi powerbi-data
+        lint typecheck test test-unit test-integration test-web e2e ci validate evaluate \
+        api-types screenshots powerbi-data
 
 help: ## Show available targets
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-18s %s\n", $$1, $$2}'
@@ -45,7 +46,7 @@ api: ## Run the FastAPI server with reload
 web: ## Run the Vite dev server
 	$(NPM) run dev
 
-lint: ## Ruff (Python) and ESLint (TypeScript)
+lint: ## Ruff (Python) and oxlint (TypeScript)
 	$(PY) -m ruff check .
 	$(PY) -m ruff format --check .
 	$(NPM) run lint
@@ -69,8 +70,18 @@ test-web: ## Frontend unit and component tests
 e2e: ## Playwright end-to-end tests (starts API and web servers)
 	$(NPM) run e2e
 
-docs-kpi: ## Regenerate docs/KPI_CATALOG.md from the code catalog
-	$(PY) scripts/export_kpi_catalog.py
+validate: ## Run the independent SQL validation queries
+	scripts/run_validation_queries.sh
+
+evaluate: ## Score the anomaly detector against the injected scenarios
+	$(PY) -m pipelines.evaluation
+
+api-types: ## Regenerate the frontend API types from the OpenAPI schema
+	$(PY) scripts/export_openapi.py
+	$(NPM) run gen:api
+
+screenshots: ## Capture the documentation screenshots from the running app
+	$(NPM) run screenshots
 
 powerbi-data: ## Export the star schema and expected values for Power BI
 	$(PY) scripts/export_powerbi_assets.py

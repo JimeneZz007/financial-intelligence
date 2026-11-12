@@ -1,0 +1,5162 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "FINANCIAL INTELLIGENCE API",
+    "description": "\nAnalytics API of **FINANCIAL INTELLIGENCE**, a financial intelligence and budget control\nplatform built on **synthetic data** of a fictional company.\n\n**Global filters.** Every analytic endpoint accepts `start`, `end` (months, `YYYY-MM`),\n`business_unit` (repeatable) and `compare`. Each response echoes the filters actually\napplied in its `filters` field.\n\n**Conventions.** Amounts are USD. Ratios are fractions (0.25 = 25%). `null` means the value\nis not defined for the selection, for example a margin with no revenue or a comparison\nwhose period lies outside the available data.\n",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/api/v1/health": {
+      "get": {
+        "tags": [
+          "Service"
+        ],
+        "summary": "Service and data status",
+        "description": "Reports whether the API can reach the database and when data was last loaded.",
+        "operationId": "health_api_v1_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Database unreachable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/dimensions": {
+      "get": {
+        "tags": [
+          "Catalogues"
+        ],
+        "summary": "Dimension catalogue and available period",
+        "description": "Everything a client needs to build filters: units, categories, accounts and period.",
+        "operationId": "dimensions_api_v1_dimensions_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DimensionsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/kpi-catalog": {
+      "get": {
+        "tags": [
+          "Catalogues"
+        ],
+        "summary": "Formal KPI definitions",
+        "description": "Formula, unit, grain, filters, null handling and limitations of every KPI.",
+        "operationId": "kpi_catalog_api_v1_kpi_catalog_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KpiCatalogResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/data-quality": {
+      "get": {
+        "tags": [
+          "Data quality"
+        ],
+        "summary": "Latest pipeline run, row accounting and data-quality checks",
+        "operationId": "data_quality_api_v1_data_quality_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DataQualityResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/kpis/summary": {
+      "get": {
+        "tags": [
+          "Executive KPIs"
+        ],
+        "summary": "Executive KPIs with comparison and budget",
+        "description": "Revenue, costs, profit and margins for the period, each compared with the\ncomparison period and with the budget, plus a monthly sparkline.",
+        "operationId": "kpi_summary_api_v1_kpis_summary_get",
+        "parameters": [
+          {
+            "name": "start",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^\\d{4}-(0[1-9]|1[0-2])$"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "First month of the period (YYYY-MM). Default: 12 months ending at `end`.",
+              "examples": [
+                "2025-01"
+              ],
+              "title": "Start"
+            },
+            "description": "First month of the period (YYYY-MM). Default: 12 months ending at `end`."
+          },
+          {
+            "name": "end",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^\\d{4}-(0[1-9]|1[0-2])$"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Last month of the period (YYYY-MM). Default: latest month with data.",
+              "examples": [
+                "2025-12"
+              ],
+              "title": "End"
+            },
+            "description": "Last month of the period (YYYY-MM). Default: latest month with data."
+          },
+          {
+            "name": "business_unit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Business unit code. Repeat the parameter to select several. Default: all units.",
+              "examples": [
+                "RET"
+              ],
+              "title": "Business Unit"
+            },
+            "description": "Business unit code. Repeat the parameter to select several. Default: all units."
+          },
+          {
+            "name": "compare",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "previous_year",
+                "previous_period"
+              ],
+              "type": "string",
+              "description": "Comparison basis: same months one year earlier, or the equally long period immediately before.",
+              "default": "previous_year",
+              "title": "Compare"
+            },
+            "description": "Comparison basis: same months one year earlier, or the equally long period immediately before."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KpiSummaryResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/timeseries": {
+      "get": {
+        "tags": [
+          "Time series"
+        ],
+        "summary": "Monthly P&L with budget and growth rates",
+        "operationId": "time_series_api_v1_timeseries_get",
+        "parameters": [
+          {
+            "name": "start",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^\\d{4}-(0[1-9]|1[0-2])$"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "First month of the period (YYYY-MM). Default: 12 months ending at `end`.",
+              "examples": [
+                "2025-01"
+              ],
+              "title": "Start"
+            },
+            "description": "First month of the period (YYYY-MM). Default: 12 months ending at `end`."
+          },
+          {
+            "name": "end",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^\\d{4}-(0[1-9]|1[0-2])$"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Last month of the period (YYYY-MM). Default: latest month with data.",
+              "examples": [
+                "2025-12"
+              ],
+              "title": "End"
+            },
+            "description": "Last month of the period (YYYY-MM). Default: latest month with data."
+          },
+          {
+            "name": "business_unit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Business unit code. Repeat the parameter to select several. Default: all units.",
+              "examples": [
+                "RET"
+              ],
+              "title": "Business Unit"
+            },
+            "description": "Business unit code. Repeat the parameter to select several. Default: all units."
+          },
+          {
+            "name": "compare",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "previous_year",
+                "previous_period"
+              ],
+              "type": "string",
+              "description": "Comparison basis: same months one year earlier, or the equally long period immediately before.",
+              "default": "previous_year",
+              "title": "Compare"
+            },
+            "description": "Comparison basis: same months one year earlier, or the equally long period immediately before."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TimeSeriesResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/timeseries/business-units": {
+      "get": {
+        "tags": [
+          "Time series"
+        ],
+        "summary": "Monthly revenue, profit and margins per business unit",
+        "operationId": "time_series_by_unit_api_v1_timeseries_business_units_get",
+        "parameters": [
+          {
+            "name": "start",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^\\d{4}-(0[1-9]|1[0-2])$"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "First month of the period (YYYY-MM). Default: 12 months ending at `end`.",
+              "examples": [
+                "2025-01"
+              ],
+              "title": "Start"
+            },
+            "description": "First month of the period (YYYY-MM). Default: 12 months ending at `end`."
+          },
+          {
+            "name": "end",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^\\d{4}-(0[1-9]|1[0-2])$"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Last month of the period (YYYY-MM). Default: latest month with data.",
+              "examples": [
+                "2025-12"
+              ],
+              "title": "End"
+            },
+            "description": "Last month of the period (YYYY-MM). Default: latest month with data."
+          },
+          {
+            "name": "business_unit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Business unit code. Repeat the parameter to select several. Default: all units.",
+              "examples": [
+                "RET"
+              ],
+              "title": "Business Unit"
+            },
+            "description": "Business unit code. Repeat the parameter to select several. Default: all units."
+          },
+          {
+            "name": "compare",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "previous_year",
+                "previous_period"
+              ],
+              "type": "string",
+              "description": "Comparison basis: same months one year earlier, or the equally long period immediately before.",
+              "default": "previous_year",
+              "title": "Compare"
+            },
+            "description": "Comparison basis: same months one year earlier, or the equally long period immediately before."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnitTimeSeriesResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/budget/statement": {
+      "get": {
+        "tags": [
+          "Budget vs actual"
+        ],
+        "summary": "Income statement: actual vs budget by account",
+        "description": "One line per account plus gross profit, total operating expenses and operating\nincome. `profit_impact` expresses each variance as its effect on operating income.",
+        "operationId": "budget_statement_api_v1_budget_statement_get",
+        "parameters": [
+          {
+            "name": "start",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^\\d{4}-(0[1-9]|1[0-2])$"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "First month of the period (YYYY-MM). Default: 12 months ending at `end`.",
+              "examples": [
+                "2025-01"
+              ],
+              "title": "Start"
+            },
+            "description": "First month of the period (YYYY-MM). Default: 12 months ending at `end`."
+          },
+          {
+            "name": "end",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^\\d{4}-(0[1-9]|1[0-2])$"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Last month of the period (YYYY-MM). Default: latest month with data.",
+              "examples": [
+                "2025-12"
+              ],
+              "title": "End"
+            },
+            "description": "Last month of the period (YYYY-MM). Default: latest month with data."
+          },
+          {
+            "name": "business_unit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Business unit code. Repeat the parameter to select several. Default: all units.",
+              "examples": [
+                "RET"
+              ],
+              "title": "Business Unit"
+            },
+            "description": "Business unit code. Repeat the parameter to select several. Default: all units."
+          },
+          {
+            "name": "compare",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "previous_year",
+                "previous_period"
+              ],
+              "type": "string",
+              "description": "Comparison basis: same months one year earlier, or the equally long period immediately before.",
+              "default": "previous_year",
+              "title": "Compare"
+            },
+            "description": "Comparison basis: same months one year earlier, or the equally long period immediately before."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BudgetStatementResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/budget/variance": {
+      "get": {
+        "tags": [
+          "Budget vs actual"
+        ],
+        "summary": "Budget variance by month or business unit",
+        "operationId": "budget_variance_api_v1_budget_variance_get",
+        "parameters": [
+          {
+            "name": "group_by",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "month",
+                "business_unit"
+              ],
+              "type": "string",
+              "default": "month",
+              "title": "Group By"
+            }
+          },
+          {
+            "name": "start",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^\\d{4}-(0[1-9]|1[0-2])$"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "First month of the period (YYYY-MM). Default: 12 months ending at `end`.",
+              "examples": [
+                "2025-01"
+              ],
+              "title": "Start"
+            },
+            "description": "First month of the period (YYYY-MM). Default: 12 months ending at `end`."
+          },
+          {
+            "name": "end",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^\\d{4}-(0[1-9]|1[0-2])$"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Last month of the period (YYYY-MM). Default: latest month with data.",
+              "examples": [
+                "2025-12"
+              ],
+              "title": "End"
+            },
+            "description": "Last month of the period (YYYY-MM). Default: latest month with data."
+          },
+          {
+            "name": "business_unit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Business unit code. Repeat the parameter to select several. Default: all units.",
+              "examples": [
+                "RET"
+              ],
+              "title": "Business Unit"
+            },
+            "description": "Business unit code. Repeat the parameter to select several. Default: all units."
+          },
+          {
+            "name": "compare",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "previous_year",
+                "previous_period"
+              ],
+              "type": "string",
+              "description": "Comparison basis: same months one year earlier, or the equally long period immediately before.",
+              "default": "previous_year",
+              "title": "Compare"
+            },
+            "description": "Comparison basis: same months one year earlier, or the equally long period immediately before."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BudgetVarianceResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/budget/matrix": {
+      "get": {
+        "tags": [
+          "Budget vs actual"
+        ],
+        "summary": "Budget variance for every business unit x account cell",
+        "operationId": "budget_matrix_api_v1_budget_matrix_get",
+        "parameters": [
+          {
+            "name": "start",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^\\d{4}-(0[1-9]|1[0-2])$"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "First month of the period (YYYY-MM). Default: 12 months ending at `end`.",
+              "examples": [
+                "2025-01"
+              ],
+              "title": "Start"
+            },
+            "description": "First month of the period (YYYY-MM). Default: 12 months ending at `end`."
+          },
+          {
+            "name": "end",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^\\d{4}-(0[1-9]|1[0-2])$"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Last month of the period (YYYY-MM). Default: latest month with data.",
+              "examples": [
+                "2025-12"
+              ],
+              "title": "End"
+            },
+            "description": "Last month of the period (YYYY-MM). Default: latest month with data."
+          },
+          {
+            "name": "business_unit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Business unit code. Repeat the parameter to select several. Default: all units.",
+              "examples": [
+                "RET"
+              ],
+              "title": "Business Unit"
+            },
+            "description": "Business unit code. Repeat the parameter to select several. Default: all units."
+          },
+          {
+            "name": "compare",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "previous_year",
+                "previous_period"
+              ],
+              "type": "string",
+              "description": "Comparison basis: same months one year earlier, or the equally long period immediately before.",
+              "default": "previous_year",
+              "title": "Compare"
+            },
+            "description": "Comparison basis: same months one year earlier, or the equally long period immediately before."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BudgetMatrixResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/profitability": {
+      "get": {
+        "tags": [
+          "Profitability"
+        ],
+        "summary": "Revenue and margins by business unit, category or product",
+        "description": "Sales measures and gross margin per segment. Operating income is included only when\ngrouping by business unit without a category filter: operating expenses are not\nrecorded by product.",
+        "operationId": "profitability_api_v1_profitability_get",
+        "parameters": [
+          {
+            "name": "group_by",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "business_unit",
+                "category",
+                "product"
+              ],
+              "type": "string",
+              "default": "category",
+              "title": "Group By"
+            }
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 3,
+                  "maxLength": 3
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Restrict to one category code",
+              "title": "Category"
+            },
+            "description": "Restrict to one category code"
+          },
+          {
+            "name": "start",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^\\d{4}-(0[1-9]|1[0-2])$"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "First month of the period (YYYY-MM). Default: 12 months ending at `end`.",
+              "examples": [
+                "2025-01"
+              ],
+              "title": "Start"
+            },
+            "description": "First month of the period (YYYY-MM). Default: 12 months ending at `end`."
+          },
+          {
+            "name": "end",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^\\d{4}-(0[1-9]|1[0-2])$"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Last month of the period (YYYY-MM). Default: latest month with data.",
+              "examples": [
+                "2025-12"
+              ],
+              "title": "End"
+            },
+            "description": "Last month of the period (YYYY-MM). Default: latest month with data."
+          },
+          {
+            "name": "business_unit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Business unit code. Repeat the parameter to select several. Default: all units.",
+              "examples": [
+                "RET"
+              ],
+              "title": "Business Unit"
+            },
+            "description": "Business unit code. Repeat the parameter to select several. Default: all units."
+          },
+          {
+            "name": "compare",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "previous_year",
+                "previous_period"
+              ],
+              "type": "string",
+              "description": "Comparison basis: same months one year earlier, or the equally long period immediately before.",
+              "default": "previous_year",
+              "title": "Compare"
+            },
+            "description": "Comparison basis: same months one year earlier, or the equally long period immediately before."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProfitabilityResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/expenses/breakdown": {
+      "get": {
+        "tags": [
+          "Expenses"
+        ],
+        "summary": "Operating expenses by account, group, cost centre or cost behaviour",
+        "description": "Budget columns are null when grouping by cost centre: the budget has no such\ndimension.",
+        "operationId": "expense_breakdown_api_v1_expenses_breakdown_get",
+        "parameters": [
+          {
+            "name": "group_by",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "account",
+                "account_group",
+                "cost_center",
+                "cost_behavior"
+              ],
+              "type": "string",
+              "default": "account_group",
+              "title": "Group By"
+            }
+          },
+          {
+            "name": "start",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^\\d{4}-(0[1-9]|1[0-2])$"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "First month of the period (YYYY-MM). Default: 12 months ending at `end`.",
+              "examples": [
+                "2025-01"
+              ],
+              "title": "Start"
+            },
+            "description": "First month of the period (YYYY-MM). Default: 12 months ending at `end`."
+          },
+          {
+            "name": "end",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^\\d{4}-(0[1-9]|1[0-2])$"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Last month of the period (YYYY-MM). Default: latest month with data.",
+              "examples": [
+                "2025-12"
+              ],
+              "title": "End"
+            },
+            "description": "Last month of the period (YYYY-MM). Default: latest month with data."
+          },
+          {
+            "name": "business_unit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Business unit code. Repeat the parameter to select several. Default: all units.",
+              "examples": [
+                "RET"
+              ],
+              "title": "Business Unit"
+            },
+            "description": "Business unit code. Repeat the parameter to select several. Default: all units."
+          },
+          {
+            "name": "compare",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "previous_year",
+                "previous_period"
+              ],
+              "type": "string",
+              "description": "Comparison basis: same months one year earlier, or the equally long period immediately before.",
+              "default": "previous_year",
+              "title": "Compare"
+            },
+            "description": "Comparison basis: same months one year earlier, or the equally long period immediately before."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExpenseBreakdownResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/expenses/matrix": {
+      "get": {
+        "tags": [
+          "Expenses"
+        ],
+        "summary": "Operating expenses by cost centre x account group",
+        "operationId": "expense_matrix_api_v1_expenses_matrix_get",
+        "parameters": [
+          {
+            "name": "start",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^\\d{4}-(0[1-9]|1[0-2])$"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "First month of the period (YYYY-MM). Default: 12 months ending at `end`.",
+              "examples": [
+                "2025-01"
+              ],
+              "title": "Start"
+            },
+            "description": "First month of the period (YYYY-MM). Default: 12 months ending at `end`."
+          },
+          {
+            "name": "end",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^\\d{4}-(0[1-9]|1[0-2])$"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Last month of the period (YYYY-MM). Default: latest month with data.",
+              "examples": [
+                "2025-12"
+              ],
+              "title": "End"
+            },
+            "description": "Last month of the period (YYYY-MM). Default: latest month with data."
+          },
+          {
+            "name": "business_unit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Business unit code. Repeat the parameter to select several. Default: all units.",
+              "examples": [
+                "RET"
+              ],
+              "title": "Business Unit"
+            },
+            "description": "Business unit code. Repeat the parameter to select several. Default: all units."
+          },
+          {
+            "name": "compare",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "previous_year",
+                "previous_period"
+              ],
+              "type": "string",
+              "description": "Comparison basis: same months one year earlier, or the equally long period immediately before.",
+              "default": "previous_year",
+              "title": "Compare"
+            },
+            "description": "Comparison basis: same months one year earlier, or the equally long period immediately before."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExpenseMatrixResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/analysis/operating-income-bridge": {
+      "get": {
+        "tags": [
+          "Analysis"
+        ],
+        "summary": "Operating income bridge versus the comparison period or the budget",
+        "description": "Steps that add up exactly from the base operating income to the current one.",
+        "operationId": "operating_income_bridge_api_v1_analysis_operating_income_bridge_get",
+        "parameters": [
+          {
+            "name": "basis",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "comparison",
+                "budget"
+              ],
+              "type": "string",
+              "default": "comparison",
+              "title": "Basis"
+            }
+          },
+          {
+            "name": "start",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^\\d{4}-(0[1-9]|1[0-2])$"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "First month of the period (YYYY-MM). Default: 12 months ending at `end`.",
+              "examples": [
+                "2025-01"
+              ],
+              "title": "Start"
+            },
+            "description": "First month of the period (YYYY-MM). Default: 12 months ending at `end`."
+          },
+          {
+            "name": "end",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^\\d{4}-(0[1-9]|1[0-2])$"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Last month of the period (YYYY-MM). Default: latest month with data.",
+              "examples": [
+                "2025-12"
+              ],
+              "title": "End"
+            },
+            "description": "Last month of the period (YYYY-MM). Default: latest month with data."
+          },
+          {
+            "name": "business_unit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Business unit code. Repeat the parameter to select several. Default: all units.",
+              "examples": [
+                "RET"
+              ],
+              "title": "Business Unit"
+            },
+            "description": "Business unit code. Repeat the parameter to select several. Default: all units."
+          },
+          {
+            "name": "compare",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "previous_year",
+                "previous_period"
+              ],
+              "type": "string",
+              "description": "Comparison basis: same months one year earlier, or the equally long period immediately before.",
+              "default": "previous_year",
+              "title": "Compare"
+            },
+            "description": "Comparison basis: same months one year earlier, or the equally long period immediately before."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BridgeResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/analysis/price-volume-mix": {
+      "get": {
+        "tags": [
+          "Analysis"
+        ],
+        "summary": "Price, volume and mix effects on the change in net revenue",
+        "operationId": "price_volume_mix_api_v1_analysis_price_volume_mix_get",
+        "parameters": [
+          {
+            "name": "group_by",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "category",
+                "business_unit"
+              ],
+              "type": "string",
+              "default": "category",
+              "title": "Group By"
+            }
+          },
+          {
+            "name": "start",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^\\d{4}-(0[1-9]|1[0-2])$"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "First month of the period (YYYY-MM). Default: 12 months ending at `end`.",
+              "examples": [
+                "2025-01"
+              ],
+              "title": "Start"
+            },
+            "description": "First month of the period (YYYY-MM). Default: 12 months ending at `end`."
+          },
+          {
+            "name": "end",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^\\d{4}-(0[1-9]|1[0-2])$"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Last month of the period (YYYY-MM). Default: latest month with data.",
+              "examples": [
+                "2025-12"
+              ],
+              "title": "End"
+            },
+            "description": "Last month of the period (YYYY-MM). Default: latest month with data."
+          },
+          {
+            "name": "business_unit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Business unit code. Repeat the parameter to select several. Default: all units.",
+              "examples": [
+                "RET"
+              ],
+              "title": "Business Unit"
+            },
+            "description": "Business unit code. Repeat the parameter to select several. Default: all units."
+          },
+          {
+            "name": "compare",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "previous_year",
+                "previous_period"
+              ],
+              "type": "string",
+              "description": "Comparison basis: same months one year earlier, or the equally long period immediately before.",
+              "default": "previous_year",
+              "title": "Compare"
+            },
+            "description": "Comparison basis: same months one year earlier, or the equally long period immediately before."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PvmResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/analysis/margin-drivers": {
+      "get": {
+        "tags": [
+          "Analysis"
+        ],
+        "summary": "Mix and rate effects on the change in gross margin",
+        "operationId": "margin_drivers_api_v1_analysis_margin_drivers_get",
+        "parameters": [
+          {
+            "name": "group_by",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "category",
+                "business_unit"
+              ],
+              "type": "string",
+              "default": "category",
+              "title": "Group By"
+            }
+          },
+          {
+            "name": "start",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^\\d{4}-(0[1-9]|1[0-2])$"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "First month of the period (YYYY-MM). Default: 12 months ending at `end`.",
+              "examples": [
+                "2025-01"
+              ],
+              "title": "Start"
+            },
+            "description": "First month of the period (YYYY-MM). Default: 12 months ending at `end`."
+          },
+          {
+            "name": "end",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^\\d{4}-(0[1-9]|1[0-2])$"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Last month of the period (YYYY-MM). Default: latest month with data.",
+              "examples": [
+                "2025-12"
+              ],
+              "title": "End"
+            },
+            "description": "Last month of the period (YYYY-MM). Default: latest month with data."
+          },
+          {
+            "name": "business_unit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Business unit code. Repeat the parameter to select several. Default: all units.",
+              "examples": [
+                "RET"
+              ],
+              "title": "Business Unit"
+            },
+            "description": "Business unit code. Repeat the parameter to select several. Default: all units."
+          },
+          {
+            "name": "compare",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "previous_year",
+                "previous_period"
+              ],
+              "type": "string",
+              "description": "Comparison basis: same months one year earlier, or the equally long period immediately before.",
+              "default": "previous_year",
+              "title": "Compare"
+            },
+            "description": "Comparison basis: same months one year earlier, or the equally long period immediately before."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarginDriversResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/analysis/anomalies": {
+      "get": {
+        "tags": [
+          "Analysis"
+        ],
+        "summary": "Months with a statistically unusual budget variance",
+        "description": "Robust z-score (median / MAD) on budget variance per business unit x account,\nscored over the whole history and reported for the selected period.",
+        "operationId": "anomalies_api_v1_analysis_anomalies_get",
+        "parameters": [
+          {
+            "name": "include_immaterial",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "description": "Also return anomalies below the materiality threshold",
+              "default": false,
+              "title": "Include Immaterial"
+            },
+            "description": "Also return anomalies below the materiality threshold"
+          },
+          {
+            "name": "start",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^\\d{4}-(0[1-9]|1[0-2])$"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "First month of the period (YYYY-MM). Default: 12 months ending at `end`.",
+              "examples": [
+                "2025-01"
+              ],
+              "title": "Start"
+            },
+            "description": "First month of the period (YYYY-MM). Default: 12 months ending at `end`."
+          },
+          {
+            "name": "end",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^\\d{4}-(0[1-9]|1[0-2])$"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Last month of the period (YYYY-MM). Default: latest month with data.",
+              "examples": [
+                "2025-12"
+              ],
+              "title": "End"
+            },
+            "description": "Last month of the period (YYYY-MM). Default: latest month with data."
+          },
+          {
+            "name": "business_unit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Business unit code. Repeat the parameter to select several. Default: all units.",
+              "examples": [
+                "RET"
+              ],
+              "title": "Business Unit"
+            },
+            "description": "Business unit code. Repeat the parameter to select several. Default: all units."
+          },
+          {
+            "name": "compare",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "previous_year",
+                "previous_period"
+              ],
+              "type": "string",
+              "description": "Comparison basis: same months one year earlier, or the equally long period immediately before.",
+              "default": "previous_year",
+              "title": "Compare"
+            },
+            "description": "Comparison basis: same months one year earlier, or the equally long period immediately before."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnomaliesResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/insights": {
+      "get": {
+        "tags": [
+          "Analysis"
+        ],
+        "summary": "Findings computed for the current filters",
+        "operationId": "insight_list_api_v1_insights_get",
+        "parameters": [
+          {
+            "name": "start",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^\\d{4}-(0[1-9]|1[0-2])$"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "First month of the period (YYYY-MM). Default: 12 months ending at `end`.",
+              "examples": [
+                "2025-01"
+              ],
+              "title": "Start"
+            },
+            "description": "First month of the period (YYYY-MM). Default: 12 months ending at `end`."
+          },
+          {
+            "name": "end",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^\\d{4}-(0[1-9]|1[0-2])$"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Last month of the period (YYYY-MM). Default: latest month with data.",
+              "examples": [
+                "2025-12"
+              ],
+              "title": "End"
+            },
+            "description": "Last month of the period (YYYY-MM). Default: latest month with data."
+          },
+          {
+            "name": "business_unit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Business unit code. Repeat the parameter to select several. Default: all units.",
+              "examples": [
+                "RET"
+              ],
+              "title": "Business Unit"
+            },
+            "description": "Business unit code. Repeat the parameter to select several. Default: all units."
+          },
+          {
+            "name": "compare",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "previous_year",
+                "previous_period"
+              ],
+              "type": "string",
+              "description": "Comparison basis: same months one year earlier, or the equally long period immediately before.",
+              "default": "previous_year",
+              "title": "Compare"
+            },
+            "description": "Comparison basis: same months one year earlier, or the equally long period immediately before."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InsightsResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/records/monthly": {
+      "get": {
+        "tags": [
+          "Records"
+        ],
+        "summary": "Paginated monthly P&L by business unit",
+        "operationId": "monthly_records_api_v1_records_monthly_get",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1,
+              "title": "Page"
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 200,
+              "minimum": 1,
+              "default": 12,
+              "title": "Page Size"
+            }
+          },
+          {
+            "name": "sort_by",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "month",
+                "business_unit_name",
+                "net_revenue",
+                "direct_costs",
+                "gross_profit",
+                "gross_margin",
+                "operating_expenses",
+                "operating_income",
+                "operating_margin",
+                "budget_net_revenue",
+                "revenue_variance_pct",
+                "budget_operating_income",
+                "operating_income_variance"
+              ],
+              "type": "string",
+              "default": "month",
+              "title": "Sort By"
+            }
+          },
+          {
+            "name": "sort_dir",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "type": "string",
+              "default": "desc",
+              "title": "Sort Dir"
+            }
+          },
+          {
+            "name": "revenue_vs_budget",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "all",
+                "above",
+                "below"
+              ],
+              "type": "string",
+              "description": "Keep only rows whose net revenue is above or below its budget",
+              "default": "all",
+              "title": "Revenue Vs Budget"
+            },
+            "description": "Keep only rows whose net revenue is above or below its budget"
+          },
+          {
+            "name": "start",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^\\d{4}-(0[1-9]|1[0-2])$"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "First month of the period (YYYY-MM). Default: 12 months ending at `end`.",
+              "examples": [
+                "2025-01"
+              ],
+              "title": "Start"
+            },
+            "description": "First month of the period (YYYY-MM). Default: 12 months ending at `end`."
+          },
+          {
+            "name": "end",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^\\d{4}-(0[1-9]|1[0-2])$"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Last month of the period (YYYY-MM). Default: latest month with data.",
+              "examples": [
+                "2025-12"
+              ],
+              "title": "End"
+            },
+            "description": "Last month of the period (YYYY-MM). Default: latest month with data."
+          },
+          {
+            "name": "business_unit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Business unit code. Repeat the parameter to select several. Default: all units.",
+              "examples": [
+                "RET"
+              ],
+              "title": "Business Unit"
+            },
+            "description": "Business unit code. Repeat the parameter to select several. Default: all units."
+          },
+          {
+            "name": "compare",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "previous_year",
+                "previous_period"
+              ],
+              "type": "string",
+              "description": "Comparison basis: same months one year earlier, or the equally long period immediately before.",
+              "default": "previous_year",
+              "title": "Compare"
+            },
+            "description": "Comparison basis: same months one year earlier, or the equally long period immediately before."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MonthlyRecordsResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/exports/{dataset}": {
+      "get": {
+        "tags": [
+          "Exports"
+        ],
+        "summary": "Download a filtered dataset as CSV",
+        "operationId": "export_dataset_api_v1_exports__dataset__get",
+        "parameters": [
+          {
+            "name": "dataset",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "enum": [
+                "monthly-pnl",
+                "budget-by-account",
+                "sales-by-product",
+                "expenses-by-cost-center",
+                "anomalies"
+              ],
+              "type": "string",
+              "title": "Dataset"
+            }
+          },
+          {
+            "name": "start",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^\\d{4}-(0[1-9]|1[0-2])$"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "First month of the period (YYYY-MM). Default: 12 months ending at `end`.",
+              "examples": [
+                "2025-01"
+              ],
+              "title": "Start"
+            },
+            "description": "First month of the period (YYYY-MM). Default: 12 months ending at `end`."
+          },
+          {
+            "name": "end",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "pattern": "^\\d{4}-(0[1-9]|1[0-2])$"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Last month of the period (YYYY-MM). Default: latest month with data.",
+              "examples": [
+                "2025-12"
+              ],
+              "title": "End"
+            },
+            "description": "Last month of the period (YYYY-MM). Default: latest month with data."
+          },
+          {
+            "name": "business_unit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Business unit code. Repeat the parameter to select several. Default: all units.",
+              "examples": [
+                "RET"
+              ],
+              "title": "Business Unit"
+            },
+            "description": "Business unit code. Repeat the parameter to select several. Default: all units."
+          },
+          {
+            "name": "compare",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "enum": [
+                "previous_year",
+                "previous_period"
+              ],
+              "type": "string",
+              "description": "Comparison basis: same months one year earlier, or the equally long period immediately before.",
+              "default": "previous_year",
+              "title": "Compare"
+            },
+            "description": "Comparison basis: same months one year earlier, or the equally long period immediately before."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "CSV file",
+            "content": {
+              "text/csv": {}
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AccountItem": {
+        "properties": {
+          "code": {
+            "type": "string",
+            "title": "Code"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "account_type": {
+            "type": "string",
+            "title": "Account Type"
+          },
+          "account_group": {
+            "type": "string",
+            "title": "Account Group"
+          },
+          "cost_behavior": {
+            "type": "string",
+            "title": "Cost Behavior"
+          }
+        },
+        "type": "object",
+        "required": [
+          "code",
+          "name",
+          "account_type",
+          "account_group",
+          "cost_behavior"
+        ],
+        "title": "AccountItem"
+      },
+      "AnomaliesResponse": {
+        "properties": {
+          "filters": {
+            "$ref": "#/components/schemas/AppliedFilters"
+          },
+          "method": {
+            "$ref": "#/components/schemas/AnomalyMethod"
+          },
+          "anomalies": {
+            "items": {
+              "$ref": "#/components/schemas/Anomaly"
+            },
+            "type": "array",
+            "title": "Anomalies"
+          }
+        },
+        "type": "object",
+        "required": [
+          "filters",
+          "method",
+          "anomalies"
+        ],
+        "title": "AnomaliesResponse"
+      },
+      "Anomaly": {
+        "properties": {
+          "month": {
+            "type": "string",
+            "title": "Month"
+          },
+          "business_unit_code": {
+            "type": "string",
+            "title": "Business Unit Code"
+          },
+          "business_unit_name": {
+            "type": "string",
+            "title": "Business Unit Name"
+          },
+          "account_code": {
+            "type": "string",
+            "title": "Account Code"
+          },
+          "account_name": {
+            "type": "string",
+            "title": "Account Name"
+          },
+          "account_type": {
+            "type": "string",
+            "title": "Account Type"
+          },
+          "actual": {
+            "type": "number",
+            "title": "Actual"
+          },
+          "budget": {
+            "type": "number",
+            "title": "Budget"
+          },
+          "variance": {
+            "type": "number",
+            "title": "Variance"
+          },
+          "variance_pct": {
+            "type": "number",
+            "title": "Variance Pct"
+          },
+          "typical_variance_pct": {
+            "type": "number",
+            "title": "Typical Variance Pct",
+            "description": "Median variance % of the series"
+          },
+          "robust_z": {
+            "type": "number",
+            "title": "Robust Z",
+            "description": "Modified z-score (median / MAD)"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "favorable",
+              "unfavorable",
+              "on_target"
+            ],
+            "title": "Status"
+          },
+          "is_material": {
+            "type": "boolean",
+            "title": "Is Material"
+          },
+          "materiality_threshold": {
+            "type": "number",
+            "title": "Materiality Threshold"
+          }
+        },
+        "type": "object",
+        "required": [
+          "month",
+          "business_unit_code",
+          "business_unit_name",
+          "account_code",
+          "account_name",
+          "account_type",
+          "actual",
+          "budget",
+          "variance",
+          "variance_pct",
+          "typical_variance_pct",
+          "robust_z",
+          "status",
+          "is_material",
+          "materiality_threshold"
+        ],
+        "title": "Anomaly"
+      },
+      "AnomalyMethod": {
+        "properties": {
+          "signal": {
+            "type": "string",
+            "title": "Signal"
+          },
+          "score": {
+            "type": "string",
+            "title": "Score"
+          },
+          "z_threshold": {
+            "type": "number",
+            "title": "Z Threshold"
+          },
+          "materiality": {
+            "type": "string",
+            "title": "Materiality"
+          },
+          "series_evaluated": {
+            "type": "integer",
+            "title": "Series Evaluated"
+          },
+          "months_of_history": {
+            "type": "integer",
+            "title": "Months Of History"
+          }
+        },
+        "type": "object",
+        "required": [
+          "signal",
+          "score",
+          "z_threshold",
+          "materiality",
+          "series_evaluated",
+          "months_of_history"
+        ],
+        "title": "AnomalyMethod"
+      },
+      "AppliedFilters": {
+        "properties": {
+          "start": {
+            "type": "string",
+            "title": "Start",
+            "examples": [
+              "2025-01"
+            ]
+          },
+          "end": {
+            "type": "string",
+            "title": "End",
+            "examples": [
+              "2025-12"
+            ]
+          },
+          "months": {
+            "type": "integer",
+            "title": "Months"
+          },
+          "period_label": {
+            "type": "string",
+            "title": "Period Label"
+          },
+          "business_units": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Business Units",
+            "description": "Business unit codes; all units if empty"
+          },
+          "compare": {
+            "type": "string",
+            "enum": [
+              "previous_year",
+              "previous_period"
+            ],
+            "title": "Compare"
+          },
+          "comparison_available": {
+            "type": "boolean",
+            "title": "Comparison Available",
+            "description": "False when the comparison period falls outside the available data"
+          },
+          "comparison_start": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Comparison Start"
+          },
+          "comparison_end": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Comparison End"
+          },
+          "comparison_label": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Comparison Label"
+          }
+        },
+        "type": "object",
+        "required": [
+          "start",
+          "end",
+          "months",
+          "period_label",
+          "business_units",
+          "compare",
+          "comparison_available"
+        ],
+        "title": "AppliedFilters",
+        "description": "The analysis context actually applied, echoed back with every analytic response."
+      },
+      "AvailablePeriod": {
+        "properties": {
+          "start": {
+            "type": "string",
+            "title": "Start"
+          },
+          "end": {
+            "type": "string",
+            "title": "End"
+          },
+          "months": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Months"
+          },
+          "fiscal_years": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array",
+            "title": "Fiscal Years"
+          }
+        },
+        "type": "object",
+        "required": [
+          "start",
+          "end",
+          "months",
+          "fiscal_years"
+        ],
+        "title": "AvailablePeriod"
+      },
+      "BridgeResponse": {
+        "properties": {
+          "filters": {
+            "$ref": "#/components/schemas/AppliedFilters"
+          },
+          "basis": {
+            "type": "string",
+            "enum": [
+              "comparison",
+              "budget"
+            ],
+            "title": "Basis"
+          },
+          "available": {
+            "type": "boolean",
+            "title": "Available"
+          },
+          "base_label": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Base Label"
+          },
+          "current_label": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Current Label"
+          },
+          "total_change": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Total Change"
+          },
+          "steps": {
+            "items": {
+              "$ref": "#/components/schemas/BridgeStepItem"
+            },
+            "type": "array",
+            "title": "Steps"
+          }
+        },
+        "type": "object",
+        "required": [
+          "filters",
+          "basis",
+          "available",
+          "base_label",
+          "current_label",
+          "total_change",
+          "steps"
+        ],
+        "title": "BridgeResponse"
+      },
+      "BridgeStepItem": {
+        "properties": {
+          "key": {
+            "type": "string",
+            "title": "Key"
+          },
+          "label": {
+            "type": "string",
+            "title": "Label"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "total",
+              "effect"
+            ],
+            "title": "Kind"
+          },
+          "amount": {
+            "type": "number",
+            "title": "Amount"
+          }
+        },
+        "type": "object",
+        "required": [
+          "key",
+          "label",
+          "kind",
+          "amount"
+        ],
+        "title": "BridgeStepItem"
+      },
+      "BudgetMatrixCell": {
+        "properties": {
+          "business_unit_code": {
+            "type": "string",
+            "title": "Business Unit Code"
+          },
+          "business_unit_name": {
+            "type": "string",
+            "title": "Business Unit Name"
+          },
+          "account_code": {
+            "type": "string",
+            "title": "Account Code"
+          },
+          "account_name": {
+            "type": "string",
+            "title": "Account Name"
+          },
+          "account_type": {
+            "type": "string",
+            "title": "Account Type"
+          },
+          "actual": {
+            "type": "number",
+            "title": "Actual"
+          },
+          "budget": {
+            "type": "number",
+            "title": "Budget"
+          },
+          "variance": {
+            "type": "number",
+            "title": "Variance"
+          },
+          "variance_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Variance Pct"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "favorable",
+              "unfavorable",
+              "on_target"
+            ],
+            "title": "Status"
+          },
+          "profit_impact": {
+            "type": "number",
+            "title": "Profit Impact"
+          }
+        },
+        "type": "object",
+        "required": [
+          "business_unit_code",
+          "business_unit_name",
+          "account_code",
+          "account_name",
+          "account_type",
+          "actual",
+          "budget",
+          "variance",
+          "variance_pct",
+          "status",
+          "profit_impact"
+        ],
+        "title": "BudgetMatrixCell"
+      },
+      "BudgetMatrixResponse": {
+        "properties": {
+          "filters": {
+            "$ref": "#/components/schemas/AppliedFilters"
+          },
+          "cells": {
+            "items": {
+              "$ref": "#/components/schemas/BudgetMatrixCell"
+            },
+            "type": "array",
+            "title": "Cells"
+          }
+        },
+        "type": "object",
+        "required": [
+          "filters",
+          "cells"
+        ],
+        "title": "BudgetMatrixResponse"
+      },
+      "BudgetStatementResponse": {
+        "properties": {
+          "filters": {
+            "$ref": "#/components/schemas/AppliedFilters"
+          },
+          "lines": {
+            "items": {
+              "$ref": "#/components/schemas/StatementLine"
+            },
+            "type": "array",
+            "title": "Lines"
+          }
+        },
+        "type": "object",
+        "required": [
+          "filters",
+          "lines"
+        ],
+        "title": "BudgetStatementResponse"
+      },
+      "BudgetVarianceResponse": {
+        "properties": {
+          "filters": {
+            "$ref": "#/components/schemas/AppliedFilters"
+          },
+          "group_by": {
+            "type": "string",
+            "enum": [
+              "month",
+              "business_unit"
+            ],
+            "title": "Group By"
+          },
+          "rows": {
+            "items": {
+              "$ref": "#/components/schemas/BudgetVarianceRow"
+            },
+            "type": "array",
+            "title": "Rows"
+          }
+        },
+        "type": "object",
+        "required": [
+          "filters",
+          "group_by",
+          "rows"
+        ],
+        "title": "BudgetVarianceResponse"
+      },
+      "BudgetVarianceRow": {
+        "properties": {
+          "key": {
+            "type": "string",
+            "title": "Key"
+          },
+          "label": {
+            "type": "string",
+            "title": "Label"
+          },
+          "net_revenue": {
+            "$ref": "#/components/schemas/Measure"
+          },
+          "direct_costs": {
+            "$ref": "#/components/schemas/Measure"
+          },
+          "operating_expenses": {
+            "$ref": "#/components/schemas/Measure"
+          },
+          "operating_income": {
+            "$ref": "#/components/schemas/Measure"
+          }
+        },
+        "type": "object",
+        "required": [
+          "key",
+          "label",
+          "net_revenue",
+          "direct_costs",
+          "operating_expenses",
+          "operating_income"
+        ],
+        "title": "BudgetVarianceRow"
+      },
+      "BusinessUnitItem": {
+        "properties": {
+          "code": {
+            "type": "string",
+            "title": "Code"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "sales_channel": {
+            "type": "string",
+            "title": "Sales Channel"
+          }
+        },
+        "type": "object",
+        "required": [
+          "code",
+          "name",
+          "sales_channel"
+        ],
+        "title": "BusinessUnitItem"
+      },
+      "CategoryItem": {
+        "properties": {
+          "code": {
+            "type": "string",
+            "title": "Code"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "product_count": {
+            "type": "integer",
+            "title": "Product Count"
+          }
+        },
+        "type": "object",
+        "required": [
+          "code",
+          "name",
+          "product_count"
+        ],
+        "title": "CategoryItem"
+      },
+      "CostCenterItem": {
+        "properties": {
+          "code": {
+            "type": "string",
+            "title": "Code"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "function_area": {
+            "type": "string",
+            "title": "Function Area"
+          }
+        },
+        "type": "object",
+        "required": [
+          "code",
+          "name",
+          "function_area"
+        ],
+        "title": "CostCenterItem"
+      },
+      "DataQualityResponse": {
+        "properties": {
+          "latest_run": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/EtlRunItem"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "summary": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/QualitySummary"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "table_loads": {
+            "items": {
+              "$ref": "#/components/schemas/TableLoadItem"
+            },
+            "type": "array",
+            "title": "Table Loads"
+          },
+          "checks": {
+            "items": {
+              "$ref": "#/components/schemas/QualityCheckItem"
+            },
+            "type": "array",
+            "title": "Checks"
+          },
+          "table_row_counts": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "Table Row Counts"
+          },
+          "recent_runs": {
+            "items": {
+              "$ref": "#/components/schemas/EtlRunItem"
+            },
+            "type": "array",
+            "title": "Recent Runs"
+          }
+        },
+        "type": "object",
+        "required": [
+          "latest_run",
+          "summary",
+          "table_loads",
+          "checks",
+          "table_row_counts",
+          "recent_runs"
+        ],
+        "title": "DataQualityResponse"
+      },
+      "DataStatus": {
+        "properties": {
+          "loaded": {
+            "type": "boolean",
+            "title": "Loaded"
+          },
+          "last_successful_run_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Successful Run At"
+          },
+          "period_start": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Period Start"
+          },
+          "period_end": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Period End"
+          },
+          "synthetic": {
+            "type": "boolean",
+            "title": "Synthetic",
+            "default": true
+          }
+        },
+        "type": "object",
+        "required": [
+          "loaded"
+        ],
+        "title": "DataStatus"
+      },
+      "DimensionsResponse": {
+        "properties": {
+          "currency": {
+            "type": "string",
+            "title": "Currency"
+          },
+          "company": {
+            "type": "string",
+            "title": "Company"
+          },
+          "synthetic": {
+            "type": "boolean",
+            "title": "Synthetic"
+          },
+          "period": {
+            "$ref": "#/components/schemas/AvailablePeriod"
+          },
+          "business_units": {
+            "items": {
+              "$ref": "#/components/schemas/BusinessUnitItem"
+            },
+            "type": "array",
+            "title": "Business Units"
+          },
+          "categories": {
+            "items": {
+              "$ref": "#/components/schemas/CategoryItem"
+            },
+            "type": "array",
+            "title": "Categories"
+          },
+          "products": {
+            "items": {
+              "$ref": "#/components/schemas/ProductItem"
+            },
+            "type": "array",
+            "title": "Products"
+          },
+          "cost_centers": {
+            "items": {
+              "$ref": "#/components/schemas/CostCenterItem"
+            },
+            "type": "array",
+            "title": "Cost Centers"
+          },
+          "accounts": {
+            "items": {
+              "$ref": "#/components/schemas/AccountItem"
+            },
+            "type": "array",
+            "title": "Accounts"
+          }
+        },
+        "type": "object",
+        "required": [
+          "currency",
+          "company",
+          "synthetic",
+          "period",
+          "business_units",
+          "categories",
+          "products",
+          "cost_centers",
+          "accounts"
+        ],
+        "title": "DimensionsResponse"
+      },
+      "EtlRunItem": {
+        "properties": {
+          "run_id": {
+            "type": "integer",
+            "title": "Run Id"
+          },
+          "started_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Started At"
+          },
+          "finished_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Finished At"
+          },
+          "duration_seconds": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Duration Seconds"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "source_seed": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Seed"
+          },
+          "generator_version": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Generator Version"
+          },
+          "data_period_start": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Data Period Start"
+          },
+          "data_period_end": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Data Period End"
+          },
+          "error_message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error Message"
+          }
+        },
+        "type": "object",
+        "required": [
+          "run_id",
+          "started_at",
+          "finished_at",
+          "duration_seconds",
+          "status",
+          "source_seed",
+          "generator_version",
+          "data_period_start",
+          "data_period_end",
+          "error_message"
+        ],
+        "title": "EtlRunItem"
+      },
+      "Evidence": {
+        "properties": {
+          "label": {
+            "type": "string",
+            "title": "Label"
+          },
+          "value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Value"
+          },
+          "unit": {
+            "type": "string",
+            "enum": [
+              "currency",
+              "percent",
+              "number"
+            ],
+            "title": "Unit"
+          }
+        },
+        "type": "object",
+        "required": [
+          "label",
+          "value",
+          "unit"
+        ],
+        "title": "Evidence"
+      },
+      "ExpenseBreakdownResponse": {
+        "properties": {
+          "filters": {
+            "$ref": "#/components/schemas/AppliedFilters"
+          },
+          "group_by": {
+            "type": "string",
+            "enum": [
+              "account",
+              "account_group",
+              "cost_center",
+              "cost_behavior"
+            ],
+            "title": "Group By"
+          },
+          "rows": {
+            "items": {
+              "$ref": "#/components/schemas/ExpenseRow"
+            },
+            "type": "array",
+            "title": "Rows"
+          },
+          "total": {
+            "$ref": "#/components/schemas/ExpenseRow"
+          }
+        },
+        "type": "object",
+        "required": [
+          "filters",
+          "group_by",
+          "rows",
+          "total"
+        ],
+        "title": "ExpenseBreakdownResponse"
+      },
+      "ExpenseMatrixCell": {
+        "properties": {
+          "cost_center_code": {
+            "type": "string",
+            "title": "Cost Center Code"
+          },
+          "cost_center_name": {
+            "type": "string",
+            "title": "Cost Center Name"
+          },
+          "account_group": {
+            "type": "string",
+            "title": "Account Group"
+          },
+          "amount": {
+            "type": "number",
+            "title": "Amount"
+          }
+        },
+        "type": "object",
+        "required": [
+          "cost_center_code",
+          "cost_center_name",
+          "account_group",
+          "amount"
+        ],
+        "title": "ExpenseMatrixCell"
+      },
+      "ExpenseMatrixResponse": {
+        "properties": {
+          "filters": {
+            "$ref": "#/components/schemas/AppliedFilters"
+          },
+          "cost_centers": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Cost Centers"
+          },
+          "account_groups": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Account Groups"
+          },
+          "cells": {
+            "items": {
+              "$ref": "#/components/schemas/ExpenseMatrixCell"
+            },
+            "type": "array",
+            "title": "Cells"
+          }
+        },
+        "type": "object",
+        "required": [
+          "filters",
+          "cost_centers",
+          "account_groups",
+          "cells"
+        ],
+        "title": "ExpenseMatrixResponse"
+      },
+      "ExpenseRow": {
+        "properties": {
+          "key": {
+            "type": "string",
+            "title": "Key"
+          },
+          "label": {
+            "type": "string",
+            "title": "Label"
+          },
+          "actual": {
+            "type": "number",
+            "title": "Actual"
+          },
+          "share": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Share",
+            "description": "Share of total operating expenses"
+          },
+          "pct_of_revenue": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pct Of Revenue"
+          },
+          "budget": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Budget",
+            "description": "Null when the grouping has no budget (cost centre)"
+          },
+          "variance": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Variance"
+          },
+          "variance_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Variance Pct"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "favorable",
+                  "unfavorable",
+                  "on_target"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status"
+          },
+          "comparison": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Comparison"
+          },
+          "change_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Change Pct"
+          }
+        },
+        "type": "object",
+        "required": [
+          "key",
+          "label",
+          "actual",
+          "share",
+          "pct_of_revenue",
+          "budget",
+          "variance",
+          "variance_pct",
+          "status",
+          "comparison",
+          "change_pct"
+        ],
+        "title": "ExpenseRow"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "HealthResponse": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "ok",
+              "degraded"
+            ],
+            "title": "Status"
+          },
+          "database": {
+            "type": "string",
+            "enum": [
+              "up",
+              "down"
+            ],
+            "title": "Database"
+          },
+          "version": {
+            "type": "string",
+            "title": "Version"
+          },
+          "data": {
+            "$ref": "#/components/schemas/DataStatus"
+          }
+        },
+        "type": "object",
+        "required": [
+          "status",
+          "database",
+          "version",
+          "data"
+        ],
+        "title": "HealthResponse"
+      },
+      "Insight": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "performance",
+              "budget",
+              "expenses",
+              "profitability",
+              "trend",
+              "anomaly"
+            ],
+            "title": "Category"
+          },
+          "tone": {
+            "type": "string",
+            "enum": [
+              "positive",
+              "negative",
+              "neutral"
+            ],
+            "title": "Tone"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "detail": {
+            "type": "string",
+            "title": "Detail"
+          },
+          "evidence": {
+            "items": {
+              "$ref": "#/components/schemas/Evidence"
+            },
+            "type": "array",
+            "title": "Evidence"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "category",
+          "tone",
+          "title",
+          "detail",
+          "evidence"
+        ],
+        "title": "Insight"
+      },
+      "InsightsResponse": {
+        "properties": {
+          "filters": {
+            "$ref": "#/components/schemas/AppliedFilters"
+          },
+          "insights": {
+            "items": {
+              "$ref": "#/components/schemas/Insight"
+            },
+            "type": "array",
+            "title": "Insights"
+          }
+        },
+        "type": "object",
+        "required": [
+          "filters",
+          "insights"
+        ],
+        "title": "InsightsResponse"
+      },
+      "Kpi": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "label": {
+            "type": "string",
+            "title": "Label"
+          },
+          "unit": {
+            "type": "string",
+            "enum": [
+              "currency",
+              "percent",
+              "number"
+            ],
+            "title": "Unit"
+          },
+          "higher_is_better": {
+            "type": "boolean",
+            "title": "Higher Is Better"
+          },
+          "value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Value"
+          },
+          "comparison_value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Comparison Value"
+          },
+          "change": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Change",
+            "description": "value - comparison (percentage points for percent KPIs)"
+          },
+          "change_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Change Pct",
+            "description": "Relative change; null for percent KPIs"
+          },
+          "comparison_status": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "favorable",
+                  "unfavorable",
+                  "on_target"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Comparison Status"
+          },
+          "budget_value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Budget Value"
+          },
+          "budget_variance": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Budget Variance"
+          },
+          "budget_variance_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Budget Variance Pct"
+          },
+          "budget_status": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "favorable",
+                  "unfavorable",
+                  "on_target"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Budget Status"
+          },
+          "sparkline": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Sparkline",
+            "description": "Monthly values across the period"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "label",
+          "unit",
+          "higher_is_better",
+          "value",
+          "sparkline"
+        ],
+        "title": "Kpi"
+      },
+      "KpiCatalogResponse": {
+        "properties": {
+          "kpis": {
+            "items": {
+              "$ref": "#/components/schemas/KpiDefinition"
+            },
+            "type": "array",
+            "title": "Kpis"
+          }
+        },
+        "type": "object",
+        "required": [
+          "kpis"
+        ],
+        "title": "KpiCatalogResponse"
+      },
+      "KpiDefinition": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "formula": {
+            "type": "string",
+            "title": "Formula"
+          },
+          "unit": {
+            "type": "string",
+            "title": "Unit"
+          },
+          "grain": {
+            "type": "string",
+            "title": "Grain"
+          },
+          "filters": {
+            "type": "string",
+            "title": "Filters"
+          },
+          "null_handling": {
+            "type": "string",
+            "title": "Null Handling"
+          },
+          "interpretation": {
+            "type": "string",
+            "title": "Interpretation"
+          },
+          "limitations": {
+            "type": "string",
+            "title": "Limitations"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "formula",
+          "unit",
+          "grain",
+          "filters",
+          "null_handling",
+          "interpretation",
+          "limitations"
+        ],
+        "title": "KpiDefinition"
+      },
+      "KpiSummaryResponse": {
+        "properties": {
+          "filters": {
+            "$ref": "#/components/schemas/AppliedFilters"
+          },
+          "kpis": {
+            "items": {
+              "$ref": "#/components/schemas/Kpi"
+            },
+            "type": "array",
+            "title": "Kpis"
+          }
+        },
+        "type": "object",
+        "required": [
+          "filters",
+          "kpis"
+        ],
+        "title": "KpiSummaryResponse"
+      },
+      "MarginDriverRow": {
+        "properties": {
+          "key": {
+            "type": "string",
+            "title": "Key"
+          },
+          "label": {
+            "type": "string",
+            "title": "Label"
+          },
+          "base_share": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Base Share"
+          },
+          "current_share": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Current Share"
+          },
+          "base_margin": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Base Margin"
+          },
+          "current_margin": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Current Margin"
+          },
+          "rate_effect": {
+            "type": "number",
+            "title": "Rate Effect"
+          },
+          "mix_effect": {
+            "type": "number",
+            "title": "Mix Effect"
+          },
+          "total_effect": {
+            "type": "number",
+            "title": "Total Effect"
+          }
+        },
+        "type": "object",
+        "required": [
+          "key",
+          "label",
+          "base_share",
+          "current_share",
+          "base_margin",
+          "current_margin",
+          "rate_effect",
+          "mix_effect",
+          "total_effect"
+        ],
+        "title": "MarginDriverRow"
+      },
+      "MarginDriversResponse": {
+        "properties": {
+          "filters": {
+            "$ref": "#/components/schemas/AppliedFilters"
+          },
+          "group_by": {
+            "type": "string",
+            "enum": [
+              "category",
+              "business_unit"
+            ],
+            "title": "Group By"
+          },
+          "available": {
+            "type": "boolean",
+            "title": "Available"
+          },
+          "base_margin": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Base Margin"
+          },
+          "current_margin": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Current Margin"
+          },
+          "margin_change": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Margin Change"
+          },
+          "rate_effect": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rate Effect"
+          },
+          "mix_effect": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mix Effect"
+          },
+          "rows": {
+            "items": {
+              "$ref": "#/components/schemas/MarginDriverRow"
+            },
+            "type": "array",
+            "title": "Rows"
+          }
+        },
+        "type": "object",
+        "required": [
+          "filters",
+          "group_by",
+          "available",
+          "base_margin",
+          "current_margin",
+          "margin_change",
+          "rate_effect",
+          "mix_effect",
+          "rows"
+        ],
+        "title": "MarginDriversResponse"
+      },
+      "Measure": {
+        "properties": {
+          "actual": {
+            "type": "number",
+            "title": "Actual"
+          },
+          "budget": {
+            "type": "number",
+            "title": "Budget"
+          },
+          "variance": {
+            "type": "number",
+            "title": "Variance",
+            "description": "actual - budget"
+          },
+          "variance_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Variance Pct",
+            "description": "variance / |budget|"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "favorable",
+              "unfavorable",
+              "on_target"
+            ],
+            "title": "Status"
+          }
+        },
+        "type": "object",
+        "required": [
+          "actual",
+          "budget",
+          "variance",
+          "variance_pct",
+          "status"
+        ],
+        "title": "Measure",
+        "description": "An actual amount compared with its budget."
+      },
+      "MonthlyRecord": {
+        "properties": {
+          "month": {
+            "type": "string",
+            "title": "Month"
+          },
+          "business_unit_code": {
+            "type": "string",
+            "title": "Business Unit Code"
+          },
+          "business_unit_name": {
+            "type": "string",
+            "title": "Business Unit Name"
+          },
+          "net_revenue": {
+            "type": "number",
+            "title": "Net Revenue"
+          },
+          "direct_costs": {
+            "type": "number",
+            "title": "Direct Costs"
+          },
+          "gross_profit": {
+            "type": "number",
+            "title": "Gross Profit"
+          },
+          "gross_margin": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gross Margin"
+          },
+          "operating_expenses": {
+            "type": "number",
+            "title": "Operating Expenses"
+          },
+          "operating_income": {
+            "type": "number",
+            "title": "Operating Income"
+          },
+          "operating_margin": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Operating Margin"
+          },
+          "budget_net_revenue": {
+            "type": "number",
+            "title": "Budget Net Revenue"
+          },
+          "revenue_variance_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Revenue Variance Pct"
+          },
+          "budget_operating_income": {
+            "type": "number",
+            "title": "Budget Operating Income"
+          },
+          "operating_income_variance": {
+            "type": "number",
+            "title": "Operating Income Variance"
+          }
+        },
+        "type": "object",
+        "required": [
+          "month",
+          "business_unit_code",
+          "business_unit_name",
+          "net_revenue",
+          "direct_costs",
+          "gross_profit",
+          "gross_margin",
+          "operating_expenses",
+          "operating_income",
+          "operating_margin",
+          "budget_net_revenue",
+          "revenue_variance_pct",
+          "budget_operating_income",
+          "operating_income_variance"
+        ],
+        "title": "MonthlyRecord"
+      },
+      "MonthlyRecordsResponse": {
+        "properties": {
+          "filters": {
+            "$ref": "#/components/schemas/AppliedFilters"
+          },
+          "pagination": {
+            "$ref": "#/components/schemas/Pagination"
+          },
+          "sort_by": {
+            "type": "string",
+            "title": "Sort By"
+          },
+          "sort_dir": {
+            "type": "string",
+            "enum": [
+              "asc",
+              "desc"
+            ],
+            "title": "Sort Dir"
+          },
+          "revenue_vs_budget": {
+            "type": "string",
+            "enum": [
+              "all",
+              "above",
+              "below"
+            ],
+            "title": "Revenue Vs Budget"
+          },
+          "rows": {
+            "items": {
+              "$ref": "#/components/schemas/MonthlyRecord"
+            },
+            "type": "array",
+            "title": "Rows"
+          }
+        },
+        "type": "object",
+        "required": [
+          "filters",
+          "pagination",
+          "sort_by",
+          "sort_dir",
+          "revenue_vs_budget",
+          "rows"
+        ],
+        "title": "MonthlyRecordsResponse"
+      },
+      "Pagination": {
+        "properties": {
+          "page": {
+            "type": "integer",
+            "title": "Page"
+          },
+          "page_size": {
+            "type": "integer",
+            "title": "Page Size"
+          },
+          "total_items": {
+            "type": "integer",
+            "title": "Total Items"
+          },
+          "total_pages": {
+            "type": "integer",
+            "title": "Total Pages"
+          }
+        },
+        "type": "object",
+        "required": [
+          "page",
+          "page_size",
+          "total_items",
+          "total_pages"
+        ],
+        "title": "Pagination"
+      },
+      "ProductItem": {
+        "properties": {
+          "code": {
+            "type": "string",
+            "title": "Code"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "category_code": {
+            "type": "string",
+            "title": "Category Code"
+          },
+          "category_name": {
+            "type": "string",
+            "title": "Category Name"
+          }
+        },
+        "type": "object",
+        "required": [
+          "code",
+          "name",
+          "category_code",
+          "category_name"
+        ],
+        "title": "ProductItem"
+      },
+      "ProfitabilityResponse": {
+        "properties": {
+          "filters": {
+            "$ref": "#/components/schemas/AppliedFilters"
+          },
+          "group_by": {
+            "type": "string",
+            "enum": [
+              "business_unit",
+              "category",
+              "product"
+            ],
+            "title": "Group By"
+          },
+          "category": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Category"
+          },
+          "rows": {
+            "items": {
+              "$ref": "#/components/schemas/ProfitabilityRow"
+            },
+            "type": "array",
+            "title": "Rows"
+          },
+          "total": {
+            "$ref": "#/components/schemas/ProfitabilityRow"
+          }
+        },
+        "type": "object",
+        "required": [
+          "filters",
+          "group_by",
+          "category",
+          "rows",
+          "total"
+        ],
+        "title": "ProfitabilityResponse"
+      },
+      "ProfitabilityRow": {
+        "properties": {
+          "key": {
+            "type": "string",
+            "title": "Key"
+          },
+          "label": {
+            "type": "string",
+            "title": "Label"
+          },
+          "parent_key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Parent Key"
+          },
+          "parent_label": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Parent Label"
+          },
+          "units": {
+            "type": "number",
+            "title": "Units"
+          },
+          "gross_sales": {
+            "type": "number",
+            "title": "Gross Sales"
+          },
+          "discounts": {
+            "type": "number",
+            "title": "Discounts"
+          },
+          "discount_rate": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Discount Rate"
+          },
+          "net_revenue": {
+            "type": "number",
+            "title": "Net Revenue"
+          },
+          "revenue_share": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Revenue Share"
+          },
+          "direct_costs": {
+            "type": "number",
+            "title": "Direct Costs"
+          },
+          "gross_profit": {
+            "type": "number",
+            "title": "Gross Profit"
+          },
+          "gross_margin": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gross Margin"
+          },
+          "operating_expenses": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Operating Expenses",
+            "description": "Only when grouped by business unit without category filter"
+          },
+          "operating_income": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Operating Income"
+          },
+          "operating_margin": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Operating Margin"
+          },
+          "comparison_net_revenue": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Comparison Net Revenue"
+          },
+          "revenue_change_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Revenue Change Pct"
+          },
+          "comparison_gross_margin": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Comparison Gross Margin"
+          },
+          "gross_margin_change": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gross Margin Change",
+            "description": "Change in ratio points"
+          }
+        },
+        "type": "object",
+        "required": [
+          "key",
+          "label",
+          "units",
+          "gross_sales",
+          "discounts",
+          "discount_rate",
+          "net_revenue",
+          "revenue_share",
+          "direct_costs",
+          "gross_profit",
+          "gross_margin"
+        ],
+        "title": "ProfitabilityRow"
+      },
+      "PvmResponse": {
+        "properties": {
+          "filters": {
+            "$ref": "#/components/schemas/AppliedFilters"
+          },
+          "group_by": {
+            "type": "string",
+            "enum": [
+              "category",
+              "business_unit"
+            ],
+            "title": "Group By"
+          },
+          "available": {
+            "type": "boolean",
+            "title": "Available"
+          },
+          "rows": {
+            "items": {
+              "$ref": "#/components/schemas/PvmRow"
+            },
+            "type": "array",
+            "title": "Rows"
+          },
+          "total": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PvmRow"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "filters",
+          "group_by",
+          "available",
+          "rows",
+          "total"
+        ],
+        "title": "PvmResponse"
+      },
+      "PvmRow": {
+        "properties": {
+          "key": {
+            "type": "string",
+            "title": "Key"
+          },
+          "label": {
+            "type": "string",
+            "title": "Label"
+          },
+          "base_revenue": {
+            "type": "number",
+            "title": "Base Revenue"
+          },
+          "current_revenue": {
+            "type": "number",
+            "title": "Current Revenue"
+          },
+          "volume_effect": {
+            "type": "number",
+            "title": "Volume Effect"
+          },
+          "mix_effect": {
+            "type": "number",
+            "title": "Mix Effect"
+          },
+          "price_effect": {
+            "type": "number",
+            "title": "Price Effect"
+          },
+          "total_change": {
+            "type": "number",
+            "title": "Total Change"
+          }
+        },
+        "type": "object",
+        "required": [
+          "key",
+          "label",
+          "base_revenue",
+          "current_revenue",
+          "volume_effect",
+          "mix_effect",
+          "price_effect",
+          "total_change"
+        ],
+        "title": "PvmRow"
+      },
+      "QualityCheckItem": {
+        "properties": {
+          "check_code": {
+            "type": "string",
+            "title": "Check Code"
+          },
+          "check_name": {
+            "type": "string",
+            "title": "Check Name"
+          },
+          "dataset": {
+            "type": "string",
+            "title": "Dataset"
+          },
+          "quality_dimension": {
+            "type": "string",
+            "title": "Quality Dimension"
+          },
+          "stage": {
+            "type": "string",
+            "title": "Stage"
+          },
+          "severity": {
+            "type": "string",
+            "title": "Severity"
+          },
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "rows_checked": {
+            "type": "integer",
+            "title": "Rows Checked"
+          },
+          "rows_failed": {
+            "type": "integer",
+            "title": "Rows Failed"
+          },
+          "details": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Details"
+          }
+        },
+        "type": "object",
+        "required": [
+          "check_code",
+          "check_name",
+          "dataset",
+          "quality_dimension",
+          "stage",
+          "severity",
+          "status",
+          "rows_checked",
+          "rows_failed",
+          "details"
+        ],
+        "title": "QualityCheckItem"
+      },
+      "QualitySummary": {
+        "properties": {
+          "total_checks": {
+            "type": "integer",
+            "title": "Total Checks"
+          },
+          "passed": {
+            "type": "integer",
+            "title": "Passed"
+          },
+          "warnings": {
+            "type": "integer",
+            "title": "Warnings"
+          },
+          "failed": {
+            "type": "integer",
+            "title": "Failed"
+          },
+          "rows_read": {
+            "type": "integer",
+            "title": "Rows Read"
+          },
+          "rows_loaded": {
+            "type": "integer",
+            "title": "Rows Loaded"
+          },
+          "rows_rejected": {
+            "type": "integer",
+            "title": "Rows Rejected"
+          },
+          "rows_deduplicated": {
+            "type": "integer",
+            "title": "Rows Deduplicated"
+          },
+          "load_rate": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Load Rate"
+          }
+        },
+        "type": "object",
+        "required": [
+          "total_checks",
+          "passed",
+          "warnings",
+          "failed",
+          "rows_read",
+          "rows_loaded",
+          "rows_rejected",
+          "rows_deduplicated",
+          "load_rate"
+        ],
+        "title": "QualitySummary"
+      },
+      "StatementLine": {
+        "properties": {
+          "key": {
+            "type": "string",
+            "title": "Key"
+          },
+          "label": {
+            "type": "string",
+            "title": "Label"
+          },
+          "level": {
+            "type": "string",
+            "enum": [
+              "account",
+              "subtotal"
+            ],
+            "title": "Level"
+          },
+          "account_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Account Type"
+          },
+          "account_group": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Account Group"
+          },
+          "higher_is_better": {
+            "type": "boolean",
+            "title": "Higher Is Better"
+          },
+          "actual": {
+            "type": "number",
+            "title": "Actual"
+          },
+          "budget": {
+            "type": "number",
+            "title": "Budget"
+          },
+          "variance": {
+            "type": "number",
+            "title": "Variance"
+          },
+          "variance_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Variance Pct"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "favorable",
+              "unfavorable",
+              "on_target"
+            ],
+            "title": "Status"
+          },
+          "profit_impact": {
+            "type": "number",
+            "title": "Profit Impact",
+            "description": "Effect of the variance on operating income"
+          },
+          "pct_of_revenue": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pct Of Revenue"
+          }
+        },
+        "type": "object",
+        "required": [
+          "key",
+          "label",
+          "level",
+          "account_type",
+          "account_group",
+          "higher_is_better",
+          "actual",
+          "budget",
+          "variance",
+          "variance_pct",
+          "status",
+          "profit_impact",
+          "pct_of_revenue"
+        ],
+        "title": "StatementLine"
+      },
+      "TableLoadItem": {
+        "properties": {
+          "target_table": {
+            "type": "string",
+            "title": "Target Table"
+          },
+          "source_file": {
+            "type": "string",
+            "title": "Source File"
+          },
+          "rows_read": {
+            "type": "integer",
+            "title": "Rows Read"
+          },
+          "rows_standardized": {
+            "type": "integer",
+            "title": "Rows Standardized"
+          },
+          "rows_rejected": {
+            "type": "integer",
+            "title": "Rows Rejected"
+          },
+          "rows_deduplicated": {
+            "type": "integer",
+            "title": "Rows Deduplicated"
+          },
+          "rows_loaded": {
+            "type": "integer",
+            "title": "Rows Loaded"
+          }
+        },
+        "type": "object",
+        "required": [
+          "target_table",
+          "source_file",
+          "rows_read",
+          "rows_standardized",
+          "rows_rejected",
+          "rows_deduplicated",
+          "rows_loaded"
+        ],
+        "title": "TableLoadItem"
+      },
+      "TimeSeriesPoint": {
+        "properties": {
+          "month": {
+            "type": "string",
+            "title": "Month"
+          },
+          "net_revenue": {
+            "type": "number",
+            "title": "Net Revenue"
+          },
+          "direct_costs": {
+            "type": "number",
+            "title": "Direct Costs"
+          },
+          "gross_profit": {
+            "type": "number",
+            "title": "Gross Profit"
+          },
+          "operating_expenses": {
+            "type": "number",
+            "title": "Operating Expenses"
+          },
+          "operating_income": {
+            "type": "number",
+            "title": "Operating Income"
+          },
+          "gross_margin": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gross Margin"
+          },
+          "operating_margin": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Operating Margin"
+          },
+          "budget_net_revenue": {
+            "type": "number",
+            "title": "Budget Net Revenue"
+          },
+          "budget_direct_costs": {
+            "type": "number",
+            "title": "Budget Direct Costs"
+          },
+          "budget_operating_expenses": {
+            "type": "number",
+            "title": "Budget Operating Expenses"
+          },
+          "budget_operating_income": {
+            "type": "number",
+            "title": "Budget Operating Income"
+          },
+          "revenue_mom_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Revenue Mom Pct",
+            "description": "Growth vs the previous month"
+          },
+          "revenue_yoy_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Revenue Yoy Pct",
+            "description": "Growth vs the same month a year earlier"
+          },
+          "operating_income_mom_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Operating Income Mom Pct"
+          },
+          "operating_income_yoy_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Operating Income Yoy Pct"
+          },
+          "revenue_rolling_3m": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Revenue Rolling 3M",
+            "description": "Trailing three-month average"
+          }
+        },
+        "type": "object",
+        "required": [
+          "month",
+          "net_revenue",
+          "direct_costs",
+          "gross_profit",
+          "operating_expenses",
+          "operating_income",
+          "gross_margin",
+          "operating_margin",
+          "budget_net_revenue",
+          "budget_direct_costs",
+          "budget_operating_expenses",
+          "budget_operating_income",
+          "revenue_mom_pct",
+          "revenue_yoy_pct",
+          "operating_income_mom_pct",
+          "operating_income_yoy_pct",
+          "revenue_rolling_3m"
+        ],
+        "title": "TimeSeriesPoint"
+      },
+      "TimeSeriesResponse": {
+        "properties": {
+          "filters": {
+            "$ref": "#/components/schemas/AppliedFilters"
+          },
+          "points": {
+            "items": {
+              "$ref": "#/components/schemas/TimeSeriesPoint"
+            },
+            "type": "array",
+            "title": "Points"
+          }
+        },
+        "type": "object",
+        "required": [
+          "filters",
+          "points"
+        ],
+        "title": "TimeSeriesResponse"
+      },
+      "UnitSeries": {
+        "properties": {
+          "key": {
+            "type": "string",
+            "title": "Key"
+          },
+          "label": {
+            "type": "string",
+            "title": "Label"
+          },
+          "points": {
+            "items": {
+              "$ref": "#/components/schemas/UnitSeriesPoint"
+            },
+            "type": "array",
+            "title": "Points"
+          }
+        },
+        "type": "object",
+        "required": [
+          "key",
+          "label",
+          "points"
+        ],
+        "title": "UnitSeries"
+      },
+      "UnitSeriesPoint": {
+        "properties": {
+          "month": {
+            "type": "string",
+            "title": "Month"
+          },
+          "net_revenue": {
+            "type": "number",
+            "title": "Net Revenue"
+          },
+          "gross_profit": {
+            "type": "number",
+            "title": "Gross Profit"
+          },
+          "operating_income": {
+            "type": "number",
+            "title": "Operating Income"
+          },
+          "gross_margin": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gross Margin"
+          },
+          "operating_margin": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Operating Margin"
+          }
+        },
+        "type": "object",
+        "required": [
+          "month",
+          "net_revenue",
+          "gross_profit",
+          "operating_income",
+          "gross_margin",
+          "operating_margin"
+        ],
+        "title": "UnitSeriesPoint"
+      },
+      "UnitTimeSeriesResponse": {
+        "properties": {
+          "filters": {
+            "$ref": "#/components/schemas/AppliedFilters"
+          },
+          "series": {
+            "items": {
+              "$ref": "#/components/schemas/UnitSeries"
+            },
+            "type": "array",
+            "title": "Series"
+          }
+        },
+        "type": "object",
+        "required": [
+          "filters",
+          "series"
+        ],
+        "title": "UnitTimeSeriesResponse"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Service",
+      "description": "Service and data status"
+    },
+    {
+      "name": "Catalogues",
+      "description": "Dimensions and KPI definitions"
+    },
+    {
+      "name": "Executive KPIs",
+      "description": "Headline indicators"
+    },
+    {
+      "name": "Time series",
+      "description": "Monthly evolution"
+    },
+    {
+      "name": "Budget vs actual",
+      "description": "Budget comparisons and variances"
+    },
+    {
+      "name": "Profitability",
+      "description": "Revenue and margins by segment"
+    },
+    {
+      "name": "Expenses",
+      "description": "Operating expense breakdowns"
+    },
+    {
+      "name": "Analysis",
+      "description": "Contribution analysis, anomalies and insights"
+    },
+    {
+      "name": "Records",
+      "description": "Paginated analytical table"
+    },
+    {
+      "name": "Exports",
+      "description": "CSV downloads"
+    },
+    {
+      "name": "Data quality",
+      "description": "Pipeline runs and data-quality checks"
+    }
+  ]
+}
