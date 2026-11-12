@@ -37,3 +37,6 @@ powerbi/data/*.csv
 .idea/
 .vscode/
 *.log
+
+# Editor/tool-local settings
+.claude/
