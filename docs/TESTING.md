@@ -22,6 +22,14 @@ Lo que la cobertura no alcanza: los tres puntos de entrada de línea de comandos
 (`python -m pipelines.generate`, `.etl` y `.evaluation`), que se ejecutan en el propio
 `make ci` pero no dentro de Pytest, y la rama de la API para una base de datos caída.
 
+**Instalación desde cero.** El mismo día se clonó el repositorio en un directorio vacío y
+se siguieron los pasos del README (`make setup`, `make db-init`, `make pipeline`). La API
+arrancó, las 16 consultas de validación y las 250 pruebas de Python pasaron, la aplicación
+web compiló y sus 73 pruebas pasaron. Los ingresos netos de 2025 resultaron idénticos al
+centavo a los del entorno de desarrollo (59 053 741,75 USD), lo que confirma que los datos
+se reproducen en una instalación nueva. Las pruebas de extremo a extremo no se repitieron
+en el clon.
+
 **No verificado:** el flujo de GitHub Actions no se ha ejecutado (repositorio sin
 publicar) y Docker Compose tampoco (sin Docker en el equipo). Las pruebas de extremo a
 extremo solo se han ejecutado en Chromium.
