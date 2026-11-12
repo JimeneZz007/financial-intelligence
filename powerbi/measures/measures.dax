@@ -1,0 +1,239 @@
+// FINANCIAL INTELLIGENCE - DAX measures
+//
+// Create an empty table named "Measures" (Home > Enter data) and add every measure to
+// it. Display folders are indicated in the section headers. Formats: currency measures
+// "$#,0", percentages "0.0%", units "#,0".
+//
+// The definitions mirror docs/KPI_CATALOG.md and the API. After building the model,
+// check them against powerbi/validation/expected_values.csv.
+//
+// STATUS: these measures have NOT been executed in Power BI (not available on the
+// development machine). Treat them as a specification until they pass that check.
+
+// ===========================================================================
+// Folder: 1 Sales
+// ===========================================================================
+Net Revenue = SUM ( fact_sales[net_sales_amount] )
+
+Gross Sales = SUM ( fact_sales[gross_sales_amount] )
+
+Discounts = SUM ( fact_sales[discount_amount] )
+
+Discount Rate % = DIVIDE ( [Discounts], [Gross Sales] )
+
+Units Sold = SUM ( fact_sales[units_sold] )
+
+Net Revenue per Unit = DIVIDE ( [Net Revenue], [Units Sold] )
+
+// Share of the total of the business units left by the slicers.
+Revenue Share of Units % =
+DIVIDE (
+    [Net Revenue],
+    CALCULATE ( [Net Revenue], ALLSELECTED ( dim_business_unit ) )
+)
+
+// Share of the total of the products and categories left by the slicers.
+Revenue Share of Products % =
+DIVIDE (
+    [Net Revenue],
+    CALCULATE ( [Net Revenue], ALLSELECTED ( dim_product ) )
+)
+
+// ===========================================================================
+// Folder: 2 Profitability
+// ===========================================================================
+Direct Costs = SUM ( fact_sales[cogs_amount] )
+
+Gross Profit = [Net Revenue] - [Direct Costs]
+
+// Ratio of sums: never average the margin of sub-slices.
+Gross Margin % = DIVIDE ( [Gross Profit], [Net Revenue] )
+
+Operating Expenses = SUM ( fact_operating_expenses[amount] )
+
+// Only meaningful by date and business unit: fact_operating_expenses has no product.
+// With a product or category on the visual, operating expenses are not filtered and
+// the result would be wrong, so the measure returns BLANK in that case.
+Operating Income =
+IF (
+    ISFILTERED ( dim_product ),
+    BLANK (),
+    [Gross Profit] - [Operating Expenses]
+)
+
+Operating Margin % = DIVIDE ( [Operating Income], [Net Revenue] )
+
+Expense Ratio % =
+IF ( ISFILTERED ( dim_product ), BLANK (), DIVIDE ( [Operating Expenses], [Net Revenue] ) )
+
+// ===========================================================================
+// Folder: 3 Budget
+// ===========================================================================
+// KEEPFILTERS respects an account selection made on the visual or a slicer.
+Budget Revenue =
+CALCULATE (
+    SUM ( fact_budget[budget_amount] ),
+    KEEPFILTERS ( dim_account[account_type] = "REVENUE" )
+)
+
+Budget Direct Costs =
+CALCULATE (
+    SUM ( fact_budget[budget_amount] ),
+    KEEPFILTERS ( dim_account[account_type] = "DIRECT_COST" )
+)
+
+Budget Operating Expenses =
+CALCULATE (
+    SUM ( fact_budget[budget_amount] ),
+    KEEPFILTERS ( dim_account[account_type] = "OPERATING_EXPENSE" )
+)
+
+Budget Gross Profit = [Budget Revenue] - [Budget Direct Costs]
+
+Budget Operating Income = [Budget Gross Profit] - [Budget Operating Expenses]
+
+Budget Operating Margin % = DIVIDE ( [Budget Operating Income], [Budget Revenue] )
+
+// ===========================================================================
+// Folder: 4 Variance
+// ===========================================================================
+Revenue Variance = [Net Revenue] - [Budget Revenue]
+
+Revenue Variance % = DIVIDE ( [Revenue Variance], ABS ( [Budget Revenue] ) )
+
+Revenue Attainment % = DIVIDE ( [Net Revenue], [Budget Revenue] )
+
+Direct Costs Variance = [Direct Costs] - [Budget Direct Costs]
+
+Direct Costs Variance % = DIVIDE ( [Direct Costs Variance], ABS ( [Budget Direct Costs] ) )
+
+Operating Expenses Variance = [Operating Expenses] - [Budget Operating Expenses]
+
+Operating Expenses Variance % =
+DIVIDE ( [Operating Expenses Variance], ABS ( [Budget Operating Expenses] ) )
+
+Operating Income Variance = [Operating Income] - [Budget Operating Income]
+
+Operating Income Variance % =
+DIVIDE ( [Operating Income Variance], ABS ( [Budget Operating Income] ) )
+
+// Favourability: a variance below 0.5% of budget is reported as on target.
+Revenue Variance Status =
+SWITCH (
+    TRUE (),
+    ISBLANK ( [Budget Revenue] ), BLANK (),
+    ABS ( [Revenue Variance %] ) < 0.005, "On target",
+    [Revenue Variance] > 0, "Favorable",
+    "Unfavorable"
+)
+
+// For costs the sign is reversed: spending above budget is unfavorable.
+Operating Expenses Variance Status =
+SWITCH (
+    TRUE (),
+    ISBLANK ( [Budget Operating Expenses] ), BLANK (),
+    ABS ( [Operating Expenses Variance %] ) < 0.005, "On target",
+    [Operating Expenses Variance] < 0, "Favorable",
+    "Unfavorable"
+)
+
+Operating Income Variance Status =
+SWITCH (
+    TRUE (),
+    ISBLANK ( [Budget Operating Income] ), BLANK (),
+    ABS ( [Operating Income Variance %] ) < 0.005, "On target",
+    [Operating Income Variance] > 0, "Favorable",
+    "Unfavorable"
+)
+
+// ===========================================================================
+// Folder: 5 Statement by account
+// For a matrix with dim_account on rows (sort account_name by statement_order).
+// ===========================================================================
+// Actual amount of the accounts in context. Sales are not related to dim_account:
+// net revenue belongs to the REVENUE account and COGS to the DIRECT_COST account.
+Actual Amount =
+SUMX (
+    VALUES ( dim_account[account_type] ),
+    SWITCH (
+        dim_account[account_type],
+        "REVENUE", [Net Revenue],
+        "DIRECT_COST", [Direct Costs],
+        "OPERATING_EXPENSE", [Operating Expenses]
+    )
+)
+
+Budget Amount = SUM ( fact_budget[budget_amount] )
+
+// Do not read the grand total of the three measures above and below: adding revenue to
+// costs has no meaning. Use [Profit Impact] for totals.
+Account Variance = [Actual Amount] - [Budget Amount]
+
+Account Variance % = DIVIDE ( [Account Variance], ABS ( [Budget Amount] ) )
+
+// Variance expressed as its effect on operating income (positive improves profit).
+// Additive across accounts: its grand total equals [Operating Income Variance].
+Profit Impact =
+SUMX (
+    VALUES ( dim_account[account_type] ),
+    VAR Variance = CALCULATE ( [Actual Amount] - [Budget Amount] )
+    RETURN
+        IF ( dim_account[account_type] = "REVENUE", Variance, - Variance )
+)
+
+// ===========================================================================
+// Folder: 6 Time intelligence
+// dim_date must be marked as the date table on full_date.
+// ===========================================================================
+Net Revenue PY = CALCULATE ( [Net Revenue], SAMEPERIODLASTYEAR ( dim_date[full_date] ) )
+
+Net Revenue YoY % =
+VAR Previous = [Net Revenue PY]
+RETURN
+    IF ( NOT ISBLANK ( Previous ), DIVIDE ( [Net Revenue] - Previous, ABS ( Previous ) ) )
+
+Net Revenue PM = CALCULATE ( [Net Revenue], DATEADD ( dim_date[full_date], -1, MONTH ) )
+
+Net Revenue MoM % =
+VAR Previous = [Net Revenue PM]
+RETURN
+    IF ( NOT ISBLANK ( Previous ), DIVIDE ( [Net Revenue] - Previous, ABS ( Previous ) ) )
+
+Net Revenue YTD = TOTALYTD ( [Net Revenue], dim_date[full_date] )
+
+// Average monthly net revenue of the three months ending in the last visible month.
+Net Revenue 3M Average =
+VAR LastDate = MAX ( dim_date[full_date] )
+VAR Window = DATESINPERIOD ( dim_date[full_date], LastDate, -3, MONTH )
+RETURN
+    IF (
+        COUNTROWS ( CALCULATETABLE ( VALUES ( dim_date[year_month] ), Window ) ) = 3,
+        CALCULATE ( [Net Revenue], Window ) / 3
+    )
+
+Operating Income PY =
+CALCULATE ( [Operating Income], SAMEPERIODLASTYEAR ( dim_date[full_date] ) )
+
+Operating Income YoY % =
+VAR Previous = [Operating Income PY]
+RETURN
+    IF ( NOT ISBLANK ( Previous ), DIVIDE ( [Operating Income] - Previous, ABS ( Previous ) ) )
+
+Gross Margin PY % = CALCULATE ( [Gross Margin %], SAMEPERIODLASTYEAR ( dim_date[full_date] ) )
+
+// Change in percentage points (a difference of ratios, not a relative change).
+Gross Margin Change pp =
+VAR Previous = [Gross Margin PY %]
+RETURN
+    IF ( NOT ISBLANK ( Previous ), [Gross Margin %] - Previous )
+
+// ===========================================================================
+// Folder: 7 Labels
+// ===========================================================================
+Selected Period =
+VAR FirstMonth = MIN ( dim_date[full_date] )
+VAR LastMonth = MAX ( dim_date[full_date] )
+RETURN
+    FORMAT ( FirstMonth, "MMM YYYY" ) & " - " & FORMAT ( LastMonth, "MMM YYYY" )
+
+Data Notice = "Synthetic data of a fictional company"

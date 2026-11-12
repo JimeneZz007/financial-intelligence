@@ -1,0 +1,117 @@
+slicers,visual_context,measure,expected_value
+"None (all years, all units)",Card,Net Revenue,160488192.49
+"None (all years, all units)",Card,Gross Sales,167714939.74
+"None (all years, all units)",Card,Discount Rate %,4.3089%
+"None (all years, all units)",Card,Units Sold,1978350
+"None (all years, all units)",Card,Direct Costs,109554073.94
+"None (all years, all units)",Card,Gross Profit,50934118.55
+"None (all years, all units)",Card,Gross Margin %,31.7370%
+"None (all years, all units)",Card,Operating Expenses,39951849.84
+"None (all years, all units)",Card,Operating Income,10982268.71
+"None (all years, all units)",Card,Operating Margin %,6.8430%
+"None (all years, all units)",Card,Budget Revenue,163075900.00
+"None (all years, all units)",Card,Budget Operating Expenses,39188400.00
+"None (all years, all units)",Card,Budget Operating Income,13403100.00
+"None (all years, all units)",Card,Revenue Variance,-2587707.51
+"None (all years, all units)",Card,Revenue Variance %,-1.5868%
+"None (all years, all units)",Card,Operating Expenses Variance,763449.84
+"None (all years, all units)",Card,Operating Income Variance,-2420831.29
+"None (all years, all units)",Card,Operating Income Variance %,-18.0617%
+Year = 2025,Card,Net Revenue,59053741.75
+Year = 2025,Card,Gross Sales,61748426.93
+Year = 2025,Card,Discount Rate %,4.3640%
+Year = 2025,Card,Units Sold,705004
+Year = 2025,Card,Direct Costs,40807923.00
+Year = 2025,Card,Gross Profit,18245818.75
+Year = 2025,Card,Gross Margin %,30.8970%
+Year = 2025,Card,Operating Expenses,14253849.07
+Year = 2025,Card,Operating Income,3991969.68
+Year = 2025,Card,Operating Margin %,6.7599%
+Year = 2025,Card,Budget Revenue,58697700.00
+Year = 2025,Card,Budget Operating Expenses,14124600.00
+Year = 2025,Card,Budget Operating Income,4890100.00
+Year = 2025,Card,Revenue Variance,356041.75
+Year = 2025,Card,Revenue Variance %,0.6066%
+Year = 2025,Card,Operating Expenses Variance,129249.07
+Year = 2025,Card,Operating Income Variance,-898130.32
+Year = 2025,Card,Operating Income Variance %,-18.3663%
+Year = 2025,Row: business_unit_name = Corporate Solutions,Net Revenue,8982062.08
+Year = 2025,Row: business_unit_name = Corporate Solutions,Operating Income,932758.73
+Year = 2025,Row: business_unit_name = Corporate Solutions,Operating Margin %,10.3847%
+Year = 2025,Row: business_unit_name = Corporate Solutions,Revenue Variance %,13.7733%
+Year = 2025,Row: business_unit_name = E-commerce,Net Revenue,13601694.77
+Year = 2025,Row: business_unit_name = E-commerce,Operating Income,582900.75
+Year = 2025,Row: business_unit_name = E-commerce,Operating Margin %,4.2855%
+Year = 2025,Row: business_unit_name = E-commerce,Revenue Variance %,-0.5339%
+Year = 2025,Row: business_unit_name = Retail Stores,Net Revenue,20500904.03
+Year = 2025,Row: business_unit_name = Retail Stores,Operating Income,1131086.77
+Year = 2025,Row: business_unit_name = Retail Stores,Operating Margin %,5.5173%
+Year = 2025,Row: business_unit_name = Retail Stores,Revenue Variance %,-2.9557%
+Year = 2025,Row: business_unit_name = Wholesale Distribution,Net Revenue,15969080.87
+Year = 2025,Row: business_unit_name = Wholesale Distribution,Operating Income,1345223.43
+Year = 2025,Row: business_unit_name = Wholesale Distribution,Operating Margin %,8.4239%
+Year = 2025,Row: business_unit_name = Wholesale Distribution,Revenue Variance %,-0.2120%
+Year = 2025,Row: category_name = Accessories,Net Revenue,7023908.96
+Year = 2025,Row: category_name = Accessories,Gross Margin %,53.1817%
+Year = 2025,Row: category_name = Accessories,Revenue Share of Products %,11.8941%
+Year = 2025,Row: category_name = Electronics,Net Revenue,20173114.26
+Year = 2025,Row: category_name = Electronics,Gross Margin %,14.2345%
+Year = 2025,Row: category_name = Electronics,Revenue Share of Products %,34.1606%
+Year = 2025,Row: category_name = Furniture,Net Revenue,9071588.45
+Year = 2025,Row: category_name = Furniture,Gross Margin %,33.5873%
+Year = 2025,Row: category_name = Furniture,Revenue Share of Products %,15.3616%
+Year = 2025,Row: category_name = Home & Kitchen,Net Revenue,11172041.97
+Year = 2025,Row: category_name = Home & Kitchen,Gross Margin %,37.3365%
+Year = 2025,Row: category_name = Home & Kitchen,Revenue Share of Products %,18.9184%
+Year = 2025,Row: category_name = Office Supplies,Net Revenue,11613088.11
+Year = 2025,Row: category_name = Office Supplies,Gross Margin %,38.0665%
+Year = 2025,Row: category_name = Office Supplies,Revenue Share of Products %,19.6653%
+year_month = 2025-03,Card,Net Revenue,4633419.37
+year_month = 2025-03,Card,Net Revenue PM,3519643.29
+year_month = 2025-03,Card,Net Revenue MoM %,31.6446%
+year_month = 2025-03,Card,Net Revenue PY,4132939.63
+year_month = 2025-03,Card,Net Revenue YoY %,12.1095%
+year_month = 2025-03,Card,Net Revenue YTD,12625617.49
+year_month = 2025-03,Card,Net Revenue 3M Average,4208539.16
+year_month = 2023-03,Card,Net Revenue PY,(blank)
+year_month = 2023-03,Card,Net Revenue YoY %,(blank)
+Year = 2025,Row: account_name = Net Sales Revenue,Actual Amount,59053741.75
+Year = 2025,Row: account_name = Net Sales Revenue,Budget Amount,58697700.00
+Year = 2025,Row: account_name = Net Sales Revenue,Profit Impact,356041.75
+Year = 2025,Row: account_name = Cost of Goods Sold,Actual Amount,40807923.00
+Year = 2025,Row: account_name = Cost of Goods Sold,Budget Amount,39683000.00
+Year = 2025,Row: account_name = Cost of Goods Sold,Profit Impact,-1124923.00
+Year = 2025,Row: account_name = Salaries & Wages,Actual Amount,5529471.48
+Year = 2025,Row: account_name = Salaries & Wages,Budget Amount,5474100.00
+Year = 2025,Row: account_name = Salaries & Wages,Profit Impact,-55371.48
+Year = 2025,Row: account_name = Employee Benefits,Actual Amount,1215933.05
+Year = 2025,Row: account_name = Employee Benefits,Budget Amount,1203700.00
+Year = 2025,Row: account_name = Employee Benefits,Profit Impact,-12233.05
+Year = 2025,Row: account_name = Advertising & Promotion,Actual Amount,1520966.04
+Year = 2025,Row: account_name = Advertising & Promotion,Budget Amount,1505200.00
+Year = 2025,Row: account_name = Advertising & Promotion,Profit Impact,-15766.04
+Year = 2025,Row: account_name = Rent & Occupancy,Actual Amount,1465435.80
+Year = 2025,Row: account_name = Rent & Occupancy,Budget Amount,1452000.00
+Year = 2025,Row: account_name = Rent & Occupancy,Profit Impact,-13435.80
+Year = 2025,Row: account_name = Utilities,Actual Amount,333882.20
+Year = 2025,Row: account_name = Utilities,Budget Amount,335000.00
+Year = 2025,Row: account_name = Utilities,Profit Impact,1117.80
+Year = 2025,Row: account_name = Freight & Distribution,Actual Amount,1534644.40
+Year = 2025,Row: account_name = Freight & Distribution,Budget Amount,1515100.00
+Year = 2025,Row: account_name = Freight & Distribution,Profit Impact,-19544.40
+Year = 2025,Row: account_name = Software & IT Services,Actual Amount,745820.13
+Year = 2025,Row: account_name = Software & IT Services,Budget Amount,740400.00
+Year = 2025,Row: account_name = Software & IT Services,Profit Impact,-5420.13
+Year = 2025,Row: account_name = Professional Services,Actual Amount,259536.90
+Year = 2025,Row: account_name = Professional Services,Budget Amount,277200.00
+Year = 2025,Row: account_name = Professional Services,Profit Impact,17663.10
+Year = 2025,Row: account_name = Travel & Entertainment,Actual Amount,261291.51
+Year = 2025,Row: account_name = Travel & Entertainment,Budget Amount,245500.00
+Year = 2025,Row: account_name = Travel & Entertainment,Profit Impact,-15791.51
+Year = 2025,Row: account_name = Payment Processing Fees,Actual Amount,840659.48
+Year = 2025,Row: account_name = Payment Processing Fees,Budget Amount,835200.00
+Year = 2025,Row: account_name = Payment Processing Fees,Profit Impact,-5459.48
+Year = 2025,Row: account_name = Depreciation & Amortization,Actual Amount,546208.08
+Year = 2025,Row: account_name = Depreciation & Amortization,Budget Amount,541200.00
+Year = 2025,Row: account_name = Depreciation & Amortization,Profit Impact,-5008.08
+Year = 2025,Matrix grand total (accounts on rows),Profit Impact,-898130.32

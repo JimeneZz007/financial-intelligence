@@ -1,0 +1,48 @@
+{
+  "name": "Financial Intelligence",
+  "dataColors": ["#3987e5", "#c98500", "#d55181", "#9085e9", "#5c6f92", "#86b6ef", "#93a0b8", "#4b5a75"],
+  "background": "#111a2c",
+  "foreground": "#e6ebf4",
+  "tableAccent": "#38bdf8",
+  "good": "#12a594",
+  "neutral": "#4b5a75",
+  "bad": "#e5604d",
+  "maximum": "#3987e5",
+  "center": "#1c2842",
+  "minimum": "#15233d",
+  "textClasses": {
+    "callout": { "fontSize": 28, "fontFace": "Segoe UI Semibold", "color": "#e6ebf4" },
+    "title": { "fontSize": 11, "fontFace": "Segoe UI Semibold", "color": "#e6ebf4" },
+    "header": { "fontSize": 10, "fontFace": "Segoe UI Semibold", "color": "#93a0b8" },
+    "label": { "fontSize": 9, "fontFace": "Segoe UI", "color": "#93a0b8" }
+  },
+  "visualStyles": {
+    "page": {
+      "*": {
+        "background": [{ "color": { "solid": { "color": "#0a101d" } }, "transparency": 0 }],
+        "outspace": [{ "color": { "solid": { "color": "#0a101d" } }, "transparency": 0 }]
+      }
+    },
+    "*": {
+      "*": {
+        "background": [{ "show": true, "color": { "solid": { "color": "#111a2c" } }, "transparency": 0 }],
+        "border": [{ "show": true, "color": { "solid": { "color": "#1f2a40" } }, "radius": 10 }],
+        "title": [
+          {
+            "show": true,
+            "fontColor": { "solid": { "color": "#e6ebf4" } },
+            "fontSize": 11,
+            "fontFamily": "Segoe UI Semibold"
+          }
+        ],
+        "dropShadow": [{ "show": false }]
+      }
+    },
+    "slicer": {
+      "*": {
+        "items": [{ "fontColor": { "solid": { "color": "#e6ebf4" } }, "background": { "solid": { "color": "#152038" } } }],
+        "header": [{ "fontColor": { "solid": { "color": "#93a0b8" } } }]
+      }
+    }
+  }
+}

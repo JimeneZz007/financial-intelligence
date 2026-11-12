@@ -13,11 +13,14 @@ from pathlib import Path
 import pytest
 from alembic import command
 from alembic.config import Config
+from fastapi.testclient import TestClient
 from sqlalchemy import Engine, text
 from sqlalchemy.exc import OperationalError
+from sqlalchemy.orm import Session
 
 from backend.app.core.config import get_settings
-from backend.app.db.session import build_engine
+from backend.app.db.session import build_engine, get_session
+from backend.app.main import app
 from pipelines.etl.runner import RunSummary, run_pipeline
 from pipelines.generate.dataset import Dataset, build_dataset, write_dataset
 
@@ -80,3 +83,17 @@ def pipeline_run(test_engine: Engine, source_dir: Path) -> RunSummary:
 def loaded_engine(test_engine: Engine, pipeline_run: RunSummary) -> Engine:
     """Engine whose database holds the full synthetic dataset."""
     return test_engine
+
+
+@pytest.fixture(scope="session")
+def client(loaded_engine: Engine) -> Iterator[TestClient]:
+    """API client whose database session is bound to the loaded test database."""
+
+    def override_session() -> Iterator[Session]:
+        with Session(loaded_engine) as session:
+            yield session
+
+    app.dependency_overrides[get_session] = override_session
+    with TestClient(app) as test_client:
+        yield test_client
+    app.dependency_overrides.clear()

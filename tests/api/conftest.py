@@ -1,33 +1,15 @@
-"""API test fixtures: a client bound to the test database and an independent oracle."""
+"""API test fixtures: an independent oracle for the figures the API returns."""
 
 from __future__ import annotations
 
-from collections.abc import Iterator
 from dataclasses import dataclass
 
 import pandas as pd
 import pytest
-from fastapi.testclient import TestClient
-from sqlalchemy import Engine
-from sqlalchemy.orm import Session
 
-from backend.app.db.session import get_session
-from backend.app.main import app
 from pipelines.generate.dataset import Dataset
 
 API = "/api/v1"
-
-
-@pytest.fixture(scope="session")
-def client(loaded_engine: Engine) -> Iterator[TestClient]:
-    def override_session() -> Iterator[Session]:
-        with Session(loaded_engine) as session:
-            yield session
-
-    app.dependency_overrides[get_session] = override_session
-    with TestClient(app) as test_client:
-        yield test_client
-    app.dependency_overrides.clear()
 
 
 @dataclass(frozen=True)
