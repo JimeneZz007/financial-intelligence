@@ -57,6 +57,8 @@ debe concluirse de él.
 - **Utilidad operativa solo por periodo y unidad de negocio.** Los gastos operativos no se
   registran por producto. No se asignan con una regla porque el resultado aparentaría una
   precisión que no existe.
+- **Sin historia en las dimensiones.** Las dimensiones se sobrescriben (tipo 1); un cambio
+  de atributo, como la categoría de un producto, no conserva su valor anterior.
 - **Un único presupuesto.** No hay versiones, pronósticos ni reprevisiones.
 - **Moneda única** y año fiscal calendario.
 - **Sin pronósticos ni modelos predictivos.** Con 36 meses y patrones diseñados, un
@@ -79,9 +81,14 @@ debe concluirse de él.
   - No detecta efectos diluidos o prolongados. El alza de costos de electrónica (escenario
     S5) pasa prácticamente desapercibida; las ocho celdas que figuran como detectadas
     coinciden con otros escenarios.
-  - Una de sus dos condiciones se añadió después de ver la primera evaluación, de modo que
-    la precisión declarada está medida sobre los mismos datos que motivaron el ajuste.
-  - Se evaluó con una sola semilla, sin intervalos de confianza.
+  - Una de sus condiciones se añadió después de ver la primera evaluación. La evaluación con
+    19 semillas adicionales muestra que la precisión se mantiene fuera de muestra (98,2 % de
+    media en las señales materiales), pero esas semillas comparten los escenarios y el
+    modelo de ruido del generador.
+  - Que detecte los nueve escenarios depende de la realización: en 5 de 19 semillas detecta
+    ocho. S2 y S9, efectos sobre gastos pequeños, son los inestables.
+  - El umbral de materialidad usa el ingreso promedio de todo el historial, por lo que es algo
+    más exigente al principio del periodo que al final.
 
   El detalle está en [ANALYSIS_METHODOLOGY.md](ANALYSIS_METHODOLOGY.md), sección 4.
 - **Hallazgos por plantillas.** El panel de hallazgos arma frases con valores calculados. No
@@ -107,4 +114,5 @@ debe concluirse de él.
 1. Construir el informe `.pbix` en un equipo con Power BI Desktop y comprobarlo con
    `powerbi/validation/expected_values.csv`.
 2. Publicar el repositorio y comprobar el flujo de GitHub Actions.
-3. Evaluar el detector de atípicos con varias semillas.
+3. Evaluar el detector de atípicos sobre datos con otros escenarios y modelos de ruido, no
+   solo con otras semillas del mismo generador.

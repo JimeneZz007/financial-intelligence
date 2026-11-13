@@ -132,6 +132,12 @@ Las dimensiones usan **claves sustitutas** generadas por la base de datos (`IDEN
 conservan la **clave natural** del sistema de origen con una restricción `UNIQUE`. La
 excepción es `dim_date`, cuya clave `YYYYMMDD` es estable por definición.
 
+**Cambios en las dimensiones.** El modelo no gestiona historia de atributos: las dimensiones
+se tratan como **tipo 1** (se sobrescriben en cada carga completa) y no hay dimensiones de
+cambio lento de tipo 2. Es suficiente porque los datos maestros sintéticos no cambian en el
+periodo; con datos reales, un cambio de categoría o de precio de lista reescribiría la
+historia y habría que versionar `dim_product`. Ver [LIMITATIONS.md](LIMITATIONS.md).
+
 ### Presupuesto mensual sobre una dimensión diaria
 
 `fact_budget` tiene grano mensual y `dim_date` grano diario. En lugar de crear una segunda
