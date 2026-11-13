@@ -6,7 +6,7 @@ NPM := npm --prefix frontend
 .DEFAULT_GOAL := help
 .PHONY: help setup env db-init db-start db-stop migrate data etl pipeline api web \
         lint typecheck test test-unit test-integration test-web e2e e2e-docker ci validate \
-        evaluate api-types screenshots powerbi-data docker-up docker-down
+        evaluate evaluate-seeds api-types screenshots powerbi-data docker-up docker-down
 
 help: ## Show available targets
 	@grep -E '^[a-zA-Z_-]+:.*?## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-18s %s\n", $$1, $$2}'
@@ -84,6 +84,9 @@ validate: ## Run the independent SQL validation queries
 
 evaluate: ## Score the anomaly detector against the injected scenarios
 	$(PY) -m pipelines.evaluation
+
+evaluate-seeds: ## Repeat the detector evaluation over 20 seeds (uses the test database)
+	$(PY) -m pipelines.evaluation.seeds --seeds 20
 
 api-types: ## Regenerate the frontend API types from the OpenAPI schema
 	$(PY) scripts/export_openapi.py

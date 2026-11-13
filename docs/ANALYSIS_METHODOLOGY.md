@@ -130,14 +130,23 @@ z_t = 0,6745 · (v_t − mediana(v)) / MAD(v)
 
 ### 3.3 Decisión
 
-Un mes es **atípico** si cumple las dos condiciones:
+Un mes es **atípico** si cumple las tres condiciones:
 
 1. `|z_t| > 3,5`, el umbral recomendado por los autores del método.
 2. `|v_t − mediana| ≥ 1 punto porcentual`.
+3. La serie tiene al menos **12 meses** con presupuesto positivo. Con menos observaciones la
+   mediana y la MAD no son estimaciones fiables. Con el historial actual (36 meses) las 52
+   series cumplen esta condición; protege el método si se carga un historial más corto.
 
 Es además **material** si la variación absoluta alcanza el 0,5 % del ingreso neto mensual
 promedio de la unidad de negocio. La aplicación muestra por defecto solo los atípicos
 materiales y permite incluir los demás.
+
+El promedio de ingresos que fija la materialidad se calcula sobre **todo el historial**, por
+coherencia con la puntuación. Como los ingresos crecen de un año a otro, el umbral es
+relativamente más exigente en los primeros meses y más laxo en los últimos. Con un
+crecimiento de alrededor del 13 % anual la diferencia es moderada, pero con una tendencia
+fuerte convendría un promedio móvil.
 
 ### 3.4 Límites conocidos
 
@@ -170,6 +179,8 @@ verifica que ese archivo coincide con una ejecución nueva.
 debería señalarla. Celda *derivada*: consecuencia mecánica (una caída de ventas reduce el
 costo de ventas); señalarla es correcto pero no exigible. *Exhaustividad* = primarias
 señaladas / primarias. *Precisión* = señales en celdas primarias o derivadas / señales.
+*Precisión estricta* = señales en celdas primarias / señales; trata las derivadas como
+errores y es la cota inferior.
 
 ### 4.1 Resultados
 
@@ -192,7 +203,11 @@ Sobre 1 872 celdas evaluadas, de las cuales 95 son primarias:
 | Todas | 80 | 50 | 17 | 13 | 52,6 % | 83,8 % |
 | Solo materiales | 50 | 43 | 6 | 1 | 45,3 % | 98,0 % |
 
-Los nueve escenarios se detectan en al menos una de sus celdas primarias.
+Con la definición estricta, la precisión es de 62,5 % (50 de 80) sobre todas las señales y
+de 86,0 % (43 de 50) sobre las materiales.
+
+Con esta semilla, los nueve escenarios se detectan en al menos una de sus celdas primarias.
+La sección 4.5 muestra que esto no se mantiene en todas las realizaciones.
 
 ### 4.2 Lectura de los resultados
 
@@ -241,11 +256,61 @@ Esta evaluación tiene límites que conviene declarar:
 - **Los umbrales no son todos previos a la evaluación.** El umbral de 3,5 y la materialidad
   de 0,5 % se fijaron de antemano. La desviación mínima de 1 punto se añadió tras ver los
   primeros resultados, de modo que la precisión de 83,8 % está medida sobre los mismos datos
-  que motivaron el ajuste y es optimista.
-- **Un solo conjunto de datos.** Las cifras corresponden a una semilla. No hay intervalos de
-  confianza ni validación con otras semillas.
+  que motivaron el ajuste y es optimista. La sección 4.5 lo comprueba con semillas que no se
+  usaron para el ajuste.
+- **Un solo conjunto de datos.** Las cifras de las secciones 4.1 a 4.3 corresponden a una
+  semilla. La sección 4.5 repite la evaluación con otras 19.
 - **Escenarios diseñados.** Miden el comportamiento ante patrones elegidos por el autor. No
   son una estimación del desempeño sobre datos reales.
+
+### 4.5 Evaluación con varias semillas
+
+Para medir cuánto dependen los resultados de una realización concreta del ruido, la
+evaluación se repite sobre 20 semillas consecutivas (`20230101` a `20230120`, fijadas antes
+de ver resultados):
+
+```bash
+python -m pipelines.evaluation.seeds --seeds 20   # o: make evaluate-seeds
+```
+
+Cada semilla regenera los extractos, los carga con el ETL real en la base de datos de
+**pruebas** y evalúa el detector con los **mismos umbrales**. Los escenarios son idénticos
+en todas; solo cambia el ruido. Las 19 semillas distintas de la del proyecto no se usaron
+para fijar ningún umbral, así que también sirven de comprobación fuera de muestra del ajuste
+descrito en la sección 4.3. Resultado versionado en
+[`evaluation/anomaly_detection_seeds.json`](evaluation/anomaly_detection_seeds.json).
+
+Señales materiales, 19 semillas fuera de muestra:
+
+| Métrica | Semilla del proyecto | Media | Mínimo | Máximo |
+|---------|---------------------:|------:|-------:|-------:|
+| Exhaustividad | 45,3 % | 46,6 % | 42,1 % | 49,5 % |
+| Precisión | 98,0 % | 98,2 % | 94,2 % | 100 % |
+| Precisión estricta | 86,0 % | 84,0 % | 75,4 % | 90,9 % |
+| Escenarios detectados | 9 de 9 | 8,7 | 8 | 9 |
+
+Exhaustividad por escenario (todas las señales), mismas 19 semillas:
+
+| Escenario | Media | Mínimo | Máximo |
+|-----------|------:|-------:|-------:|
+| S1, S3, S4, S7, S8 | 100 % | 100 % | 100 % |
+| S6 Alza de fletes | 89 % | 69 % | 100 % |
+| S9 Congelación de viajes | 66 % | 0 % | 100 % |
+| S2 Campaña de adquisición | 63 % | 25 % | 100 % |
+| S5 Alza de costos de electrónica | 17 % | 15 % | 21 % |
+
+Lectura:
+
+- **La precisión se sostiene fuera de muestra.** La media de las semillas nuevas (98,2 %) es
+  igual a la de la semilla con la que se ajustó el detector. El ajuste post hoc no explica la
+  precisión observada.
+- **"Detecta los nueve escenarios" depende de la semilla.** En 5 de las 19 semillas una señal
+  material se pierde y se detectan 8. Los escenarios inestables son S2 y S9: efectos sobre
+  gastos pequeños, donde el ruido de cada realización decide si la celda supera el umbral.
+- **S5 no se detecta en ninguna realización**, lo que confirma la explicación de la sección
+  4.2: es una limitación del método, no de una semilla desfavorable.
+- **Límite.** Todas las semillas comparten los mismos escenarios y el mismo modelo de ruido.
+  La variación medida es la debida al azar del generador, no la que tendrían datos reales.
 
 ## 5. Hallazgos automáticos
 

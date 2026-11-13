@@ -9,7 +9,7 @@
 | Estilo y errores comunes (Python) | Ruff | Sin incidencias |
 | Formato (Python) | Ruff format | Sin diferencias |
 | Tipos (Python) | mypy `--strict` | Sin errores en 55 archivos |
-| Pruebas de Python | Pytest | **250 de 250** |
+| Pruebas de Python | Pytest | **257 de 257** |
 | Cobertura de `backend` y `pipelines` | pytest-cov | **95 %** (líneas y ramas) |
 | Validación SQL independiente | 16 consultas | **16 de 16** sin violaciones |
 | Estilo y accesibilidad estática (web) | oxlint | Sin incidencias |
@@ -101,13 +101,13 @@ se copió.
 
 ## 4. Qué cubre cada conjunto
 
-### Python — 250 pruebas
+### Python — 257 pruebas
 
 | Conjunto | Pruebas | Qué demuestra |
 |----------|--------:|---------------|
 | `tests/generate` | 24 | La misma semilla produce archivos idénticos; el manifiesto versionado coincide con datos regenerados; identidades contables al centavo; márgenes plausibles; cada escenario deja la huella documentada |
 | `tests/etl` | 23 | El ETL reconstruye **exactamente** el conjunto válido a partir de extractos con defectos; cada regla aparta lo que debe; los defectos recuperables se reparan; una clave en conflicto o un rechazo masivo detienen la carga |
-| `tests/analytics` | 92 | Fórmulas y favorabilidad; periodos de comparación; precio-volumen-mezcla y mezcla-tasa suman el cambio total sobre 25 conjuntos aleatorios cada una, con productos que aparecen y desaparecen; el puente suma sobre casos construidos; el detector de atípicos y su tasa de falsos positivos |
+| `tests/analytics` | 99 | Fórmulas y favorabilidad; periodos de comparación; precio-volumen-mezcla y mezcla-tasa suman el cambio total sobre 25 conjuntos aleatorios cada una, con productos que aparecen y desaparecen; el puente suma sobre casos construidos; el detector de atípicos y su tasa de falsos positivos; el resumen de la evaluación con varias semillas |
 | `tests/api` | 70 | Triangulación de los KPI; todos los filtros; validación de parámetros; series y tasas de crecimiento; presupuesto; rentabilidad; gastos; análisis; hallazgos; paginación, orden y filtro; CSV; documentación OpenAPI; almacén vacío |
 | `tests/integration` | 41 | Carga completa, conciliación, idempotencia, reversión ante un fallo, auditoría; cada restricción de la base de datos rechaza lo que debe; las 16 consultas de validación; la evaluación publicada y los valores esperados de Power BI son reproducibles |
 
