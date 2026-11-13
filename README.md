@@ -20,7 +20,7 @@ transacción y desviaciones que se explican tarde y de forma anecdótica.
 
 Detalle en [docs/BUSINESS_PROBLEM.md](docs/BUSINESS_PROBLEM.md).
 
-## Objetivo
+## Objetivos
 
 Una vista única que responda, con cifras verificables:
 
@@ -55,21 +55,6 @@ Transversales:
 - **Exportación CSV** con los filtros aplicados.
 - **Diseño adaptable**, operable con teclado y auditado con `axe-core`.
 
-### Lo que encuentra el análisis
-
-Con los datos de referencia, año fiscal 2025 frente a 2024:
-
-- Los ingresos netos crecieron 13,4 % hasta 59,1 M USD; la utilidad operativa, 15,7 % hasta
-  4,0 M, pero quedó 18,4 % por debajo del presupuesto.
-- El cambio de ingresos de +7,0 M se descompone en volumen (+5,0 M), precio (+2,4 M) y
-  mezcla (−0,5 M).
-- El margen bruto cayó 1,3 puntos; casi toda la caída es efecto tasa en electrónica.
-- El detector de atípicos marca 21 celdas materiales en el año. Evaluado contra los nueve
-  escenarios inyectados, los detecta todos en al menos una celda, con una precisión de 98 %
-  entre las señales materiales, pero **no detecta por sí solo un alza de costos diluida a
-  lo largo del año**. La evaluación completa, con sus límites, está en
-  [docs/ANALYSIS_METHODOLOGY.md](docs/ANALYSIS_METHODOLOGY.md).
-
 ## Arquitectura
 
 ```mermaid
@@ -94,7 +79,90 @@ flowchart LR
 Detalle en [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) y
 [docs/DATA_MODEL.md](docs/DATA_MODEL.md).
 
-## Stack
+## Modelo de datos
+
+Esquema estrella en PostgreSQL diseñado con los cuatro pasos de Kimball: proceso de negocio,
+grano, dimensiones y hechos.
+
+| Tabla de hechos | Grano | Dimensiones |
+|-----------------|-------|-------------|
+| `fact_sales` | día × unidad de negocio × producto | fecha, unidad, producto |
+| `fact_operating_expenses` | asiento contable | fecha, unidad, centro de costo, cuenta |
+| `fact_budget` | mes × unidad de negocio × cuenta | fecha (primer día del mes), unidad, cuenta |
+
+Las cinco dimensiones (`dim_date`, `dim_business_unit`, `dim_product`, `dim_cost_center`,
+`dim_account`) usan claves sustitutas y conservan la clave natural de origen. El grano de cada
+hecho está garantizado por su clave primaria, y la base de datos rechaza filas que violen las
+identidades contables (por ejemplo, `venta neta = venta bruta − descuento`). Como la unidad de
+negocio y la fecha son las únicas dimensiones que comparten los tres hechos, son también los
+únicos filtros globales de la aplicación.
+
+Diagrama, claves y restricciones en [docs/DATA_MODEL.md](docs/DATA_MODEL.md).
+
+## Metodología
+
+El proceso sigue **CRISP-DM**: cada fase tiene un entregable en el repositorio, desde la
+definición del problema hasta la evaluación de los métodos
+([docs/RESEARCH_DESIGN.md](docs/RESEARCH_DESIGN.md)). La fase de modelado es analítica, no
+predictiva: con 36 meses de patrones diseñados, un pronóstico solo reproduciría lo que el
+generador programó.
+
+| Método | Qué responde |
+|--------|--------------|
+| Análisis de variaciones con favorabilidad | Qué cuentas explican la desviación frente al presupuesto o al año anterior |
+| Puente de utilidad operativa | Cómo se pasa de la utilidad base a la actual, línea por línea |
+| Descomposición precio-volumen-mezcla | Qué parte del cambio de ingresos se debe a precio, a cantidad y a composición |
+| Descomposición mezcla-tasa del margen | Si el margen cambia porque los segmentos son menos rentables o porque pesan distinto |
+| Detección de atípicos (z robusta, Iglewicz-Hoaglin) | Qué meses de cada serie unidad × cuenta se apartan de su comportamiento típico |
+
+Las descomposiciones son identidades exactas: la suma de las partes es igual al cambio total,
+y hay pruebas que lo comprueban con datos aleatorios. Ningún método establece causalidad.
+Fórmulas, supuestos y evaluación en
+[docs/ANALYSIS_METHODOLOGY.md](docs/ANALYSIS_METHODOLOGY.md).
+
+## Indicadores
+
+Cada indicador tiene una sola definición, servida por la API (`/api/v1/kpi-catalog`), escrita
+igual en las medidas DAX y comprobada por tres caminos independientes.
+
+| Indicador | Definición |
+|-----------|------------|
+| Ingresos netos | Σ venta neta (venta bruta − descuentos) |
+| Costos directos | Σ costo de ventas |
+| Utilidad bruta · Margen bruto | Ingresos netos − costos directos · utilidad bruta / ingresos netos |
+| Gastos operativos | Σ asientos de gasto operativo |
+| Utilidad operativa · Margen operativo | Utilidad bruta − gastos operativos · utilidad operativa / ingresos netos |
+| Variación presupuestal | Ejecución − presupuesto, en valor y en % de \|presupuesto\| |
+| Crecimiento intermensual e interanual | (valor − valor de referencia) / \|valor de referencia\| |
+| Tasa de descuento | Σ descuentos / Σ venta bruta |
+| Participación en ingresos | Ingresos del segmento / ingresos de la selección |
+| Razón de gasto | Gastos operativos / ingresos netos |
+
+Catálogo completo, con unidades, sentido favorable y tratamiento de nulos, en
+[docs/KPI_CATALOG.md](docs/KPI_CATALOG.md).
+
+## Resultados
+
+Con los datos sintéticos de referencia, año fiscal 2025 frente a 2024:
+
+- Los ingresos netos crecieron 13,4 % hasta 59,1 M USD; la utilidad operativa, 15,7 % hasta
+  4,0 M, pero quedó 18,4 % (0,9 M) por debajo del presupuesto, sobre todo porque el costo de
+  ventas superó lo presupuestado en 1,1 M.
+- El cambio de ingresos de +7,0 M se descompone en volumen (+5,0 M), precio (+2,4 M) y
+  mezcla (−0,5 M).
+- El margen bruto cayó 1,3 puntos; 1,27 puntos son efecto tasa en electrónica, cuyo margen
+  pasó de 17,9 % a 14,2 %.
+- El detector de atípicos marca 21 celdas materiales en el año. Evaluado contra los nueve
+  escenarios inyectados, tiene una precisión de 98 % entre las señales materiales (86 % si
+  solo se cuentan como aciertos las celdas afectadas directamente). Repetida la evaluación
+  con 19 semillas que no se usaron para ajustarlo, la precisión media se mantiene en 98 %,
+  pero detecta los nueve escenarios en 14 de las 19 realizaciones y ocho en las demás. **No
+  detecta un alza de costos diluida a lo largo del año** en ninguna de ellas.
+
+Son resultados sobre datos diseñados: muestran que los métodos encuentran los patrones que se
+inyectaron, no que funcionen igual con datos reales.
+
+## Tecnologías
 
 | Área | Tecnologías |
 |------|-------------|
@@ -146,6 +214,7 @@ make help        # lista completa
 make db-stop     # detiene PostgreSQL
 make validate    # consultas SQL de validación independientes
 make evaluate    # evalúa el detector de atípicos contra los escenarios
+make evaluate-seeds  # repite la evaluación con 20 semillas
 make powerbi-data
 ```
 
@@ -176,7 +245,7 @@ make ci          # todas las verificaciones, igual que el flujo de CI
 
 | Verificación | Resultado |
 |--------------|-----------|
-| Pytest (unitarias e integración contra PostgreSQL) | 250 de 250 · cobertura 95 % |
+| Pytest (unitarias e integración contra PostgreSQL) | 257 de 257 · cobertura 95 % |
 | Consultas SQL de validación | 16 de 16 sin violaciones |
 | Ruff · mypy estricto | Sin incidencias |
 | Vitest y Testing Library | 73 de 73 |
@@ -224,6 +293,13 @@ Todas son de la aplicación en ejecución y se regeneran con `make screenshots`.
 Más capturas, incluidas las de teléfono y la vista filtrada, en
 [docs/UI_DESIGN.md](docs/UI_DESIGN.md).
 
+## Verificación
+
+Todas las cifras de este README se reprodujeron desde cero en un entorno limpio (Linux, en
+lugar del macOS de desarrollo): datos regenerados idénticos byte a byte al manifiesto, todas
+las suites de pruebas y un recálculo de los resultados con código escrito aparte. El detalle,
+incluido lo que no se pudo verificar, está en [AUDIT.md](AUDIT.md).
+
 ## Estado y limitaciones
 
 | Componente | Estado |
@@ -246,6 +322,18 @@ Lo más importante que conviene saber:
 
 La lista completa está en [docs/LIMITATIONS.md](docs/LIMITATIONS.md).
 
+## Trabajo futuro
+
+- Construir el informe Power BI (`.pbix`) en Windows y validarlo contra los 116 valores
+  esperados de `powerbi/validation/expected_values.csv`.
+- Presupuesto flexible para separar, en los costos variables, el efecto volumen del efecto
+  tarifa.
+- Evaluar el detector con escenarios y modelos de ruido distintos de los del generador, y
+  complementarlo con un método para efectos prolongados y diluidos.
+- Carga incremental y dimensiones de cambio lento (tipo 2) para volúmenes y datos maestros
+  reales.
+- Autenticación y caché en la API antes de exponerla fuera de un equipo local.
+
 ## Documentación
 
 | Tema | Documento |
@@ -266,6 +354,7 @@ La lista completa está en [docs/LIMITATIONS.md](docs/LIMITATIONS.md).
 | Pruebas | [TESTING.md](docs/TESTING.md) |
 | Limitaciones | [LIMITATIONS.md](docs/LIMITATIONS.md) |
 | Decisiones de diseño | [DECISIONS.md](docs/DECISIONS.md) |
+| Verificación de reproducibilidad | [AUDIT.md](AUDIT.md) |
 | Historial de cambios | [CHANGELOG.md](CHANGELOG.md) |
 
 ## Licencia
