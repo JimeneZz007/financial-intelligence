@@ -15,8 +15,22 @@ proyecto usa [versionado semántico](https://semver.org/lang/es/).
 
 ### Añadido
 
+- Evaluación del detector de atípicos con 20 semillas (`make evaluate-seeds`): mide la
+  variabilidad de exhaustividad y precisión, comprueba fuera de muestra el umbral añadido
+  tras la primera evaluación y reporta la precisión estricta. Resultados en
+  `docs/evaluation/anomaly_detection_seeds.json`.
+- `AUDIT.md`: verificación de reproducibilidad de todas las cifras desde un entorno limpio.
+- README: secciones de modelo de datos, metodología, indicadores, resultados y trabajo
+  futuro.
 - La configuración de Playwright acepta `E2E_WEB_URL` y `E2E_API_URL` para ejecutar la
   misma suite contra otro despliegue; `make e2e-docker` la lanza contra Docker Compose.
+
+### Corregido
+
+- El README afirmaba sin matices que el detector encuentra los nueve escenarios; con otras
+  semillas encuentra ocho en 5 de 19 casos. Afirmación corregida.
+- Documentados la condición de 12 observaciones mínimas del detector, la base de cálculo
+  de la materialidad y el tratamiento tipo 1 de las dimensiones.
 
 ## [0.1.0] - 2026-11-12
 
