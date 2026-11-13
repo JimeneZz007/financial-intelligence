@@ -1,7 +1,6 @@
 # Continuous integration: the same checks as `make ci` (scripts/ci_local.sh).
 #
-# STATUS: prepared locally. It has not run on GitHub because the repository is not
-# published yet; the equivalent local script is the verified path.
+# Runs on every push to main and on pull requests.
 name: CI
 
 on:

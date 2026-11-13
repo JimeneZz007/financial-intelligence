@@ -69,7 +69,9 @@ Año fiscal 2025 frente a 2024. Las tres columnas se obtuvieron por caminos sepa
 
 - **Docker Compose.** El entorno de verificación no tenía Docker. La verificación descrita
   en el README la hizo el autor en macOS y no se repitió.
-- **GitHub Actions.** El flujo no se había ejecutado nunca antes de publicar el repositorio.
+- **GitHub Actions.** No se había ejecutado nunca antes de publicar el repositorio. Su
+  primera ejecución en GitHub, con los cambios de la sección 6 incluidos, pasó los tres
+  trabajos (Python, web y extremo a extremo).
 - **Power BI.** No hay archivo `.pbix`; Power BI Desktop no existe para macOS ni Linux. Se
   verificó que existen las 50 medidas DAX y los 116 valores esperados, no que funcionen.
 

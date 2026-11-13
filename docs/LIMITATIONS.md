@@ -16,7 +16,7 @@ debe concluirse de él.
 | Docker Compose | Completado y verificado (macOS, Docker Desktop 29) |
 | Insumos de Power BI (consultas M, medidas DAX, tema) | Implementado, **no verificado** en Power BI |
 | Informe Power BI (`.pbix`) | **Pendiente** |
-| Flujo de GitHub Actions | Implementado, **no verificado** |
+| Flujo de GitHub Actions | Completado y verificado |
 
 ## 2. Lo que no se ha verificado
 
@@ -24,7 +24,6 @@ debe concluirse de él.
   macOS. No hay archivo `.pbix` ni capturas. Las consultas M, las medidas DAX y el tema
   nunca se han ejecutado; pueden contener errores que solo aparecerán al construir el
   informe. Los valores esperados permiten comprobarlo ([POWER_BI.md](POWER_BI.md)).
-- **GitHub Actions.** El flujo no ha corrido nunca. Su equivalente local, `make ci`, sí.
 - **Otros navegadores y sistemas.** La interfaz se probó en Chromium sobre macOS. La
   instalación nativa se verificó en macOS con PostgreSQL de Homebrew; en Linux o Windows
   puede requerir ajustes en `scripts/dev_db.sh`. Docker Compose se verificó en macOS
@@ -113,6 +112,5 @@ debe concluirse de él.
 
 1. Construir el informe `.pbix` en un equipo con Power BI Desktop y comprobarlo con
    `powerbi/validation/expected_values.csv`.
-2. Publicar el repositorio y comprobar el flujo de GitHub Actions.
-3. Evaluar el detector de atípicos sobre datos con otros escenarios y modelos de ruido, no
+2. Evaluar el detector de atípicos sobre datos con otros escenarios y modelos de ruido, no
    solo con otras semillas del mismo generador.

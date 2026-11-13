@@ -1,5 +1,7 @@
 # FINANCIAL INTELLIGENCE
 
+[![CI](https://github.com/JimeneZz007/financial-intelligence/actions/workflows/ci.yml/badge.svg)](https://github.com/JimeneZz007/financial-intelligence/actions/workflows/ci.yml)
+
 Plataforma analítica de inteligencia financiera y control presupuestal. Convierte
 extractos transaccionales de ventas, gastos y presupuesto en indicadores con definición
 formal, comparaciones contra el plan y hallazgos calculados, de modo que cada cifra es
@@ -334,7 +336,7 @@ incluido lo que no se pudo verificar, está en [AUDIT.md](AUDIT.md).
 | Docker Compose | Completado y verificado (macOS, Docker Desktop 29) |
 | Insumos de Power BI (consultas M, medidas DAX, tema, valores esperados) | Implementado, sin verificar en Power BI |
 | Informe Power BI (`.pbix`) | **Pendiente**: requiere Power BI Desktop, que no existe para macOS |
-| GitHub Actions | Implementado, sin verificar (repositorio sin publicar) |
+| GitHub Actions | Completado y verificado (Python, web y extremo a extremo) |
 
 Lo más importante que conviene saber:
 

@@ -161,7 +161,7 @@ flowchart TD
 | Nativo: PostgreSQL local del proyecto, `uvicorn`, Vite | **Verificado**; es la ruta descrita en el README |
 | CI local: `make ci` | **Verificado** |
 | Docker Compose: PostgreSQL, pipeline de un solo paso, API, nginx con la web | **Verificado** el 2026-11-12 en macOS con Docker Desktop 29; las pruebas de extremo a extremo pasan contra esta pila |
-| GitHub Actions | Implementado, **no verificado** (repositorio sin publicar) |
+| GitHub Actions | Completado y verificado |
 
 ### Configuración y secretos
 

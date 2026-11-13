@@ -8,6 +8,8 @@ proyecto usa [versionado semántico](https://semver.org/lang/es/).
 
 ### Verificado
 
+- GitHub Actions, ejecutado por primera vez al publicar el repositorio: los trabajos de
+  Python, web y extremo a extremo pasan.
 - Docker Compose, ejecutado por primera vez con Docker Desktop 29 en macOS: las imágenes se
   construyen, el pipeline carga el almacén, las 16 consultas de validación y las 43 pruebas
   de extremo a extremo pasan contra la pila en contenedores. Documentación actualizada en

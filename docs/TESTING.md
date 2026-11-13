@@ -43,8 +43,10 @@ comprobó:
 | Playwright contra `http://localhost:8080` (nginx sirve la web y reenvía `/api`) | **43 de 43** |
 | `docker compose down` y `up` sobre el mismo volumen | El pipeline recarga el almacén (`ETL run 2`) y conserva la auditoría; arranque en 22 s |
 
-**No verificado:** el flujo de GitHub Actions no se ha ejecutado (repositorio sin
-publicar). Las pruebas de extremo a extremo solo se han ejecutado en Chromium, y Docker
+**GitHub Actions:** el flujo pasó en su primera ejecución tras publicar el repositorio,
+con sus tres trabajos (Python, web y extremo a extremo).
+
+**No verificado:** las pruebas de extremo a extremo solo se han ejecutado en Chromium, y Docker
 Compose solo en macOS.
 
 ## 2. Cómo ejecutarlas
