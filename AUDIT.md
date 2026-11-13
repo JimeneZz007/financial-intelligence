@@ -8,6 +8,11 @@ se instala, se ejecuta y produce las cifras que declara.
 
 ## 1. Método
 
+La verificación se hizo con Claude (Anthropic) en una sesión distinta de la de desarrollo,
+sin partir de sus conclusiones, y con revisión de la autora. No es una auditoría de un
+tercero humano; su valor está en que cada resultado se puede repetir con los comandos de la
+sección 7.
+
 - Se copiaron únicamente los archivos versionados a un entorno nuevo y distinto del de
   desarrollo: **Linux (aarch64), Python 3.12.3, PostgreSQL 16, Node.js 22.23**, frente al
   macOS con Python 3.12.14 en el que se desarrolló.

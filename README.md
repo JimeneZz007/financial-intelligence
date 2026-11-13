@@ -293,6 +293,32 @@ Todas son de la aplicación en ejecución y se regeneran con `make screenshots`.
 Más capturas, incluidas las de teléfono y la vista filtrada, en
 [docs/UI_DESIGN.md](docs/UI_DESIGN.md).
 
+## Sobre el desarrollo
+
+Este proyecto se desarrolló con asistencia de **Claude Code** (Anthropic). La división del
+trabajo fue la siguiente:
+
+**Mi responsabilidad**
+
+- Definir el objetivo, el enfoque y las expectativas del proyecto.
+- Aprobar las preguntas de negocio y las necesidades que debía resolver la plataforma.
+- Seleccionar los marcos metodológicos (CRISP-DM y modelado dimensional de Kimball) y
+  comprender su aplicación.
+- Definir o aprobar los supuestos de los datos sintéticos y del análisis.
+- Revisar y aprobar las decisiones de diseño registradas en
+  [docs/DECISIONS.md](docs/DECISIONS.md).
+- Revisar, probar y modificar el código.
+- Revisar la evidencia, validar los resultados y evaluar el producto final.
+
+**Con asistencia de Claude Code**
+
+- Propuestas de preguntas, ideas y mejoras, que revisé y aprobé antes de incorporarlas.
+- La implementación del código, las pruebas y la documentación, generada bajo mi dirección y
+  revisada por mí.
+
+La aplicación no usa ningún modelo de IA en tiempo de ejecución: los hallazgos se construyen
+con plantillas y valores calculados.
+
 ## Verificación
 
 Todas las cifras de este README se reprodujeron desde cero en un entorno limpio (Linux, en
